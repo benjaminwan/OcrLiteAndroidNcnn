@@ -32,6 +32,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBa
         resultTV.movementMethod = ScrollingMovementMethod.getInstance()
         selectBtn.setOnClickListener(this)
         detectBtn.setOnClickListener(this)
+        updateBoxScoreThresh((ocrEngine.boxScoreThresh * 100).toInt())
+        updateBoxThresh((ocrEngine.boxThresh * 100).toInt())
+        updateMinArea(ocrEngine.miniArea.toInt())
+        updateAngleWidth((ocrEngine.angleScaleWidth * 10).toInt())
+        updateAngleHeight((ocrEngine.angleScaleHeight * 10).toInt())
+        updateTextWidth((ocrEngine.textScaleWidth * 10).toInt())
+        updateTextHeight((ocrEngine.textScaleHeight * 10).toInt())
         boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
         boxThreshSeekBar.setOnSeekBarChangeListener(this)
         minAreaSeekBar.setOnSeekBarChangeListener(this)
@@ -59,18 +66,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 val maxSize = max(img.width, img.height)
                 val reSize = (scale * maxSize).toInt()
                 detect(img, reSize)
-                /*val boxImg: Bitmap = Bitmap.createBitmap(
-                    img.width, img.height, Bitmap.Config.ARGB_8888
-                )
-                Log.i(TAG, "selectedImg=${img.height},${img.width} ${img.config}")
-                val start = System.currentTimeMillis()
-                resultTV.text = ocrEngine.detect(img, boxImg, reSize)
-                val end = System.currentTimeMillis()
-                val time = "time=${end - start}ms"
-                timeTV.text = time
-                val options =
-                    RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
-                Glide.with(this).load(boxImg).apply(options).into(imageView)*/
             }
             else -> {
             }
