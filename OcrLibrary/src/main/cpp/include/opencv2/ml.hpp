@@ -1135,7 +1135,7 @@ public:
     /** @brief The array of a priori class probabilities, sorted by the class label value.
 
     The parameter can be used to tune the decision tree preferences toward a certain class. For
-    example, if you want to getTextLine some rare anomaly occurrence, the training base will likely
+    example, if you want to detect some rare anomaly occurrence, the training base will likely
     contain much more normal cases than anomalies, so a very good classification performance
     will be achieved just by considering every case as normal. To avoid this, the priors can be
     specified, where the anomaly probability is artificially increased (up to 0.5 or even

@@ -693,11 +693,11 @@ public:
      */
     CV_WRAP bool detect(InputArray img, OutputArray points) const;
 
-    /** @brief Decodes QR code in image once it's found by the getTextLine() method.
+    /** @brief Decodes QR code in image once it's found by the detect() method.
 
      Returns UTF8-encoded output string or empty string if the code cannot be decoded.
      @param img grayscale or color (BGR) image containing QR code.
-     @param points Quadrangle vertices found by getTextLine() method (or some other algorithm).
+     @param points Quadrangle vertices found by detect() method (or some other algorithm).
      @param straight_qrcode The optional output image containing rectified and binarized QR code
      */
     CV_WRAP cv::String decode(InputArray img, InputArray points, OutputArray straight_qrcode = noArray());
@@ -717,10 +717,10 @@ public:
     CV_WRAP
     bool detectMulti(InputArray img, OutputArray points) const;
 
-    /** @brief Decodes QR codes in image once it's found by the getTextLine() method.
+    /** @brief Decodes QR codes in image once it's found by the detect() method.
      @param img grayscale or color (BGR) image containing QR codes.
      @param decoded_info UTF8-encoded output vector of string or empty vector of string if the codes cannot be decoded.
-     @param points vector of Quadrangle vertices found by getTextLine() method (or some other algorithm).
+     @param points vector of Quadrangle vertices found by detect() method (or some other algorithm).
      @param straight_qrcode The optional output vector of images containing rectified and binarized QR codes
      */
     CV_WRAP

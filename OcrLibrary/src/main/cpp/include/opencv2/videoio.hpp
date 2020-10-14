@@ -87,7 +87,7 @@ To be used in the VideoCapture::VideoCapture() constructor or VideoCapture::open
 See @ref videoio_overview for more information.
 */
 enum VideoCaptureAPIs {
-       CAP_ANY          = 0,            //!< Auto getTextLine == 0
+       CAP_ANY          = 0,            //!< Auto detect == 0
        CAP_VFW          = 200,          //!< Video For Windows (platform native)
        CAP_V4L          = 200,          //!< V4L/V4L2 capturing support via libv4l
        CAP_V4L2         = CAP_V4L,      //!< Same as CAP_V4L

@@ -69,7 +69,7 @@ public:
     @param corners Source image top-left corners
     @param images Source images
     @param masks Image masks to update (second value in pair specifies the value which should be used
-    to getTextLine where image is)
+    to detect where image is)
      */
     void feed(const std::vector<Point> &corners, const std::vector<UMat> &images,
               const std::vector<UMat> &masks);

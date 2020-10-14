@@ -477,7 +477,7 @@ public:
     MatAllocator() {}
     virtual ~MatAllocator() {}
 
-    // let's comment it off for now to getTextLine and fix all the uses of allocator
+    // let's comment it off for now to detect and fix all the uses of allocator
     //virtual void allocate(int dims, const int* sizes, int type, int*& refcount,
     //                      uchar*& datastart, uchar*& data, size_t* step) = 0;
     //virtual void deallocate(int* refcount, uchar* datastart, uchar* data) = 0;
@@ -2625,7 +2625,7 @@ protected:
 
 Such a sparse array can store elements of any type that Mat can store. *Sparse* means that only
 non-zero elements are stored (though, as a result of operations on a sparse matrix, some of its
-stored elements can actually become 0. It is up to you to getTextLine such elements and delete them
+stored elements can actually become 0. It is up to you to detect such elements and delete them
 using SparseMat::erase ). The non-zero elements are stored in a hash table that grows when it is
 filled so that the search time is O(1) in average (regardless of whether element is there or not).
 Elements can be accessed using the following methods:

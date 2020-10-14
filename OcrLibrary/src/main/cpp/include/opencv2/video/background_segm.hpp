@@ -214,7 +214,7 @@ public:
 @param varThreshold Threshold on the squared Mahalanobis distance between the pixel and the model
 to decide whether a pixel is well described by the background model. This parameter does not
 affect the background update.
-@param detectShadows If true, the algorithm will getTextLine shadows and mark them. It decreases the
+@param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
 speed a bit, so if you do not need this feature, set the parameter to false.
  */
 CV_EXPORTS_W Ptr<BackgroundSubtractorMOG2>
@@ -303,7 +303,7 @@ public:
 @param history Length of the history.
 @param dist2Threshold Threshold on the squared distance between the pixel and the sample to decide
 whether a pixel is close to that sample. This parameter does not affect the background update.
-@param detectShadows If true, the algorithm will getTextLine shadows and mark them. It decreases the
+@param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
 speed a bit, so if you do not need this feature, set the parameter to false.
  */
 CV_EXPORTS_W Ptr<BackgroundSubtractorKNN>

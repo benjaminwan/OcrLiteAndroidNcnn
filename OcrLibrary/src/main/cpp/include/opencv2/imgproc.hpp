@@ -868,11 +868,11 @@ public:
     CV_WRAP virtual void setAngleEpsilon(double angleEpsilon) = 0;
     CV_WRAP virtual double getAngleEpsilon() const = 0;
 
-    //! Minimal rotation angle to getTextLine in degrees.
+    //! Minimal rotation angle to detect in degrees.
     CV_WRAP virtual void setMinAngle(double minAngle) = 0;
     CV_WRAP virtual double getMinAngle() const = 0;
 
-    //! Maximal rotation angle to getTextLine in degrees.
+    //! Maximal rotation angle to detect in degrees.
     CV_WRAP virtual void setMaxAngle(double maxAngle) = 0;
     CV_WRAP virtual double getMaxAngle() const = 0;
 
@@ -884,11 +884,11 @@ public:
     CV_WRAP virtual void setAngleThresh(int angleThresh) = 0;
     CV_WRAP virtual int getAngleThresh() const = 0;
 
-    //! Minimal scale to getTextLine.
+    //! Minimal scale to detect.
     CV_WRAP virtual void setMinScale(double minScale) = 0;
     CV_WRAP virtual double getMinScale() const = 0;
 
-    //! Maximal scale to getTextLine.
+    //! Maximal scale to detect.
     CV_WRAP virtual void setMaxScale(double maxScale) = 0;
     CV_WRAP virtual double getMaxScale() const = 0;
 
@@ -1231,7 +1231,7 @@ public:
     ![image](pics/building_lsd.png)
 
     @param _image A grayscale (CV_8UC1) input image. If only a roi needs to be selected, use:
-    `lsd_ptr-\>getTextLine(image(roi), lines, ...); lines += Scalar(roi.x, roi.y, roi.x, roi.y);`
+    `lsd_ptr-\>detect(image(roi), lines, ...); lines += Scalar(roi.x, roi.y, roi.x, roi.y);`
     @param _lines A vector of Vec4i or Vec4f elements specifying the beginning and ending point of a line. Where
     Vec4i/Vec4f is (x1, y1, x2, y2), point 1 is the start, point 2 - end. Returned lines are strictly
     oriented depending on the gradient.
@@ -2774,7 +2774,7 @@ floating-point.
 CV_EXPORTS_W void accumulateWeighted( InputArray src, InputOutputArray dst,
                                       double alpha, InputArray mask = noArray() );
 
-/** @brief The function is used to getTextLine translational shifts that occur between two images.
+/** @brief The function is used to detect translational shifts that occur between two images.
 
 The operation takes advantage of the Fourier shift theorem for detecting the translational shift in
 the frequency domain. It can be used for fast image registration as well as motion estimation. For

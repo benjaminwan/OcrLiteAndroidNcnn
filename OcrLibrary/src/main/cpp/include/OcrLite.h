@@ -55,7 +55,7 @@ private:
     ncnn::Net dbNet, angleNet, crnnNet;
     int numThread = 4;
 
-    const float unClipRatio = 1.5;
+    //const float unClipRatio = 1.5;
     //const float boxScoreThresh = 0.5;
     //const float thresh = 0.3;
     //const float minArea = 3;

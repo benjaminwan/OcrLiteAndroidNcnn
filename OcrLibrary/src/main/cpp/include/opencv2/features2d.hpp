@@ -293,7 +293,7 @@ public:
 
 /** @brief Class implementing the ORB (*oriented BRIEF*) keypoint detector and descriptor extractor
 
-described in @cite RRKB11 . The algorithm uses FAST in pyramids to getTextLine stable keypoints, selects
+described in @cite RRKB11 . The algorithm uses FAST in pyramids to detect stable keypoints, selects
 the strongest features using FAST or Harris response, finds their orientation using first-order
 moments and computes the descriptors using BRIEF (where the coordinates of random point pairs (or
 k-tuples) are rotated according to the measured orientation).
@@ -446,7 +446,7 @@ Detects corners using the FAST algorithm by @cite Rosten06 .
 
 @note In Python API, types are given as cv2.FAST_FEATURE_DETECTOR_TYPE_5_8,
 cv2.FAST_FEATURE_DETECTOR_TYPE_7_12 and cv2.FAST_FEATURE_DETECTOR_TYPE_9_16. For corner
-detection, use cv2.FAST.getTextLine() method.
+detection, use cv2.FAST.detect() method.
  */
 CV_EXPORTS void FAST( InputArray image, CV_OUT std::vector<KeyPoint>& keypoints,
                       int threshold, bool nonmaxSuppression, int type );
@@ -695,7 +695,7 @@ public:
 @details AKAZE descriptors can only be used with KAZE or AKAZE keypoints. This class is thread-safe.
 
 @note When you need descriptors use Feature2D::detectAndCompute, which
-provides better performance. When using Feature2D::getTextLine followed by
+provides better performance. When using Feature2D::detect followed by
 Feature2D::compute scale space pyramid is computed twice.
 
 @note AKAZE implements T-API. When image is passed as UMat some parts of the algorithm
