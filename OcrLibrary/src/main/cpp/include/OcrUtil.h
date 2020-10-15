@@ -1,29 +1,7 @@
 #pragma once
 
 #include <opencv2/core.hpp>
-
-struct ScaleParam {
-    int srcWidth;
-    int srcHeight;
-    int dstWidth;
-    int dstHeight;
-    float scaleWidth;
-    float scaleHeight;
-
-    ScaleParam(
-            int srcWidth,
-            int srcHeight,
-            int targetWidth,
-            int targetHeight,
-            float scaleWidth,
-            float scaleHeight
-    ) : srcWidth(srcWidth),
-        srcHeight(srcHeight),
-        dstWidth(targetWidth),
-        dstHeight(targetHeight),
-        scaleWidth(scaleWidth),
-        scaleHeight(scaleHeight) {};
-};
+#include "OcrStruct.h"
 
 ScaleParam getScaleParam(cv::Mat &src, const float scale);
 
