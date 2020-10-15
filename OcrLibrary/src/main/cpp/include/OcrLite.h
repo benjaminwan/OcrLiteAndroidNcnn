@@ -50,7 +50,7 @@ private:
 
     TextLine getTextLine(cv::Mat &src);
 
-    TextLine scoreToString(ncnn::Mat &score);
+    TextLine scoreToTextLine(ncnn::Mat &score);
 
     ncnn::Net dbNet, angleNet, crnnNet;
     int numThread = 4;

@@ -158,7 +158,7 @@ Angle OcrLite::getAngle(cv::Mat &src) {
     return scoreToAngle(out);
 }
 
-TextLine OcrLite::scoreToString(ncnn::Mat &score) {
+TextLine OcrLite::scoreToTextLine(ncnn::Mat &score) {
     auto *srcData = (float *) score.data;
     std::string strRes;
     int lastIndex = 0;
@@ -166,7 +166,7 @@ TextLine OcrLite::scoreToString(ncnn::Mat &score) {
     for (int i = 0; i < score.h; i++) {
         //find max score
         int maxIndex = 0;
-        float maxValue = -1000;
+        float maxValue = -1000.f;
         for (int j = 0; j < score.w; j++) {
             if (srcData[i * score.w + j] > maxValue) {
                 maxValue = srcData[i * score.w + j];
@@ -215,7 +215,7 @@ TextLine OcrLite::getTextLine(cv::Mat &src) {
         memcpy(blob263.row(i), blob263_i, 5531 * sizeof(float));
     }
 
-    return scoreToString(blob263);
+    return scoreToTextLine(blob263);
 }
 
 std::string OcrLite::detect(cv::Mat &src, ScaleParam &scale, cv::Mat &imgBox,
