@@ -106,14 +106,6 @@ OcrLite::getTextBoxes(cv::Mat &src, ScaleParam &s,
         if (score < boxScoreThresh)
             continue;
 
-        /*std::vector<cv::Point> newBox;
-        unClip(minBox, allEdgeSize, newBox, unClipRatio);
-
-        getMiniBoxes(newBox, minBox, minEdgeSize, allEdgeSize);
-
-        if (minEdgeSize < minArea + 2)
-            continue;*/
-
         for (int j = 0; j < minBox.size(); ++j) {
             minBox[j].x = (minBox[j].x / s.scaleWidth);
             minBox[j].x = (std::min)((std::max)(minBox[j].x, 0), s.srcWidth);
