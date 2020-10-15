@@ -62,11 +62,17 @@ cv::RotatedRect getPartRect(std::vector<cv::Point> &box, float scaleWidth, float
     return rect;
 }
 
-void drawTextBox(cv::Mat &boxImg, cv::RotatedRect &rect) {
-    cv::Point2f vertices[4];      //定义4个点的数组
-    rect.points(vertices);   //将四个点存储到vertices数组中
+int getThickness(cv::Mat &boxImg) {
+    int minSize = boxImg.cols > boxImg.rows ? boxImg.rows : boxImg.cols;
+    int thickness = minSize / 1000 + 2;
+    return thickness;
+}
+
+void drawTextBox(cv::Mat &boxImg, cv::RotatedRect &rect, int thickness) {
+    cv::Point2f vertices[4];
+    rect.points(vertices);
     for (int i = 0; i < 4; i++)
-        cv::line(boxImg, vertices[i], vertices[(i + 1) % 4], cv::Scalar(0, 0, 255), 2);
+        cv::line(boxImg, vertices[i], vertices[(i + 1) % 4], cv::Scalar(0, 0, 255), thickness);
     //cv::polylines(srcmat, textpoint, true, cv::Scalar(0, 255, 0), 2);
 }
 

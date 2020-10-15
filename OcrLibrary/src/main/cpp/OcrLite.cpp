@@ -222,6 +222,9 @@ std::string OcrLite::detect(cv::Mat &src, ScaleParam &scale, cv::Mat &imgBox,
                             float boxScoreThresh, float boxThresh, float minArea,
                             float angleScaleWidth, float angleScaleHeight,
                             float textScaleWidth, float textScaleHeight) {
+
+    //文字框 线宽
+    int thickness = getThickness(src);
     //图像文字分割
     LOGI("=====Start detect=====");
     LOGI("ScaleParam(sw:%d,sh:%d,dw:%d,dH%d,%f,%f)", scale.srcWidth, scale.srcHeight,
@@ -250,7 +253,7 @@ std::string OcrLite::detect(cv::Mat &src, ScaleParam &scale, cv::Mat &imgBox,
         LOGI("rectText(%f, %f)", rectText.size.width, rectText.size.height);
 
         //文字框
-        drawTextBox(imgBox, rectText);
+        drawTextBox(imgBox, rectText, thickness);
         for (int p = 0; p < 4; ++p) {
             LOGI("Pt%d(x: %d, y: %d)", p, textBoxes[i].box[p].x, textBoxes[i].box[p].y);
         }

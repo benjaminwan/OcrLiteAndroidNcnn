@@ -31,7 +31,9 @@ ScaleParam getScaleParam(cv::Mat &src, const int targetSize);
 
 cv::RotatedRect getPartRect(std::vector<cv::Point> &box, float scaleWidth, float scaleHeight);
 
-void drawTextBox(cv::Mat &boxImg, cv::RotatedRect &rect);
+int getThickness(cv::Mat &boxImg);
+
+void drawTextBox(cv::Mat &boxImg, cv::RotatedRect &rect, int thickness);
 
 cv::Mat matRotateClockWise180(cv::Mat src);
 
