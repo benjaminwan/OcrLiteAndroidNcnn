@@ -24,6 +24,3 @@ int getMiniBoxes(std::vector<cv::Point> &invec,
 
 float boxScoreFast(cv::Mat &mapmat, std::vector<cv::Point> &_box);
 
-int unClip(std::vector<cv::Point> &minboxvec, float alledgesize,
-           std::vector<cv::Point> &outvec, float unclip_ratio);
-

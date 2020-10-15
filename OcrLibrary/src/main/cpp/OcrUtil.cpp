@@ -1,5 +1,4 @@
 #include "OcrUtil.h"
-#include "clipper.hpp"
 #include "RRLib.h"
 
 ScaleParam getScaleParam(cv::Mat &src, const float scale) {
@@ -187,37 +186,5 @@ float boxScoreFast(cv::Mat &mapmat, std::vector<cv::Point> &_box) {
 
     return cv::mean(mapmat(cv::Rect(cv::Point(xmin, ymin), cv::Point(xmax + 1, ymax + 1))).clone(),
                     maskmat).val[0];
-
-}
-
-
-int unClip(std::vector<cv::Point> &minboxvec, float alledgesize, std::vector<cv::Point> &outvec,
-           float unclip_ratio) {
-    ClipperLib::Path poly;
-
-    for (int i = 0; i < minboxvec.size(); ++i) {
-        poly.push_back(ClipperLib::IntPoint(minboxvec[i].x, minboxvec[i].y));
-    }
-
-    double distace = unclip_ratio * ClipperLib::Area(poly) / (double) alledgesize;
-
-    ClipperLib::ClipperOffset clipperoffset;
-    clipperoffset.AddPath(poly, ClipperLib::JoinType::jtRound,
-                          ClipperLib::EndType::etClosedPolygon);
-    ClipperLib::Paths polys;
-    polys.push_back(poly);
-    clipperoffset.Execute(polys, distace);
-
-
-    outvec.clear();
-    std::vector<cv::Point> rsvec;
-    for (int i = 0; i < polys.size(); ++i) {
-        ClipperLib::Path tmppoly = polys[i];
-        for (int j = 0; j < tmppoly.size(); ++j) {
-            outvec.push_back(cv::Point(tmppoly[j].X, tmppoly[j].Y));
-        }
-    }
-
-    return 1;
 
 }
