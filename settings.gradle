@@ -1,3 +1,3 @@
-rootProject.name = "ChOcrLiteAndroidOnnx"
+rootProject.name = "ChOcrLiteAndroidOnnxToNcnn"
 include ':app'
 include ':OcrLibrary'
