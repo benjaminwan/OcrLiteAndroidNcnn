@@ -11,26 +11,15 @@ OcrResultUtils::OcrResultUtils(JNIEnv *env, OcrResult &ocrResult, jobject boxImg
     }
 
     jmethodID jOcrResultConstructor = env->GetMethodID(jOcrResultClass, "<init>",
-                                                       "(Ljava/util/ArrayList;DLjava/util/ArrayList;Ljava/util/ArrayList;Landroid/graphics/Bitmap;DLjava/lang/String;)V");
+                                                       "(DLjava/util/ArrayList;Landroid/graphics/Bitmap;DLjava/lang/String;)V");
 
-    jobject textBoxes = getTextBoxes(ocrResult.textBoxes);
-
-    jdouble textBoxesTime = (jdouble) ocrResult.textBoxesTime;
-
-    jobject angles = getAngles(ocrResult.angles);
-
-    jobject textLines = getTextLines(ocrResult.lines);
-    jdouble fullTime = (jdouble) ocrResult.fullTime;
+    jobject textBlocks = getTextBlocks(ocrResult.textBlocks);
+    jdouble dbNetTime = (jdouble) ocrResult.dbNetTime;
+    jdouble detectTime = (jdouble) ocrResult.detectTime;
     jstring jStrRest = jniEnv->NewStringUTF(ocrResult.strRes.c_str());
 
-    jOcrResult = env->NewObject(jOcrResultClass, jOcrResultConstructor,
-                                textBoxes, textBoxesTime,
-                                angles, textLines, boxImg, fullTime, jStrRest);
-
-    jniEnv->DeleteLocalRef(textBoxes);
-    jniEnv->DeleteLocalRef(angles);
-    jniEnv->DeleteLocalRef(textLines);
-    jniEnv->DeleteLocalRef(jStrRest);
+    jOcrResult = env->NewObject(jOcrResultClass, jOcrResultConstructor, dbNetTime,
+                                textBlocks, boxImg, detectTime, jStrRest);
 }
 
 OcrResultUtils::~OcrResultUtils() {
@@ -66,99 +55,57 @@ jobject OcrResultUtils::newJPoint(cv::Point &point) {
     return obj;
 }
 
-jobject OcrResultUtils::newJBox(std::vector<cv::Point> &box) {
+jobject OcrResultUtils::newJBoxPoint(std::vector<cv::Point> &boxPoint) {
     jclass jListClass = newJListClass();
     jmethodID jListConstructor = getListConstructor(jListClass);
     jobject jList = jniEnv->NewObject(jListClass, jListConstructor);
     jmethodID jListAdd = jniEnv->GetMethodID(jListClass, "add", "(Ljava/lang/Object;)Z");
 
-    for (auto point : box) {
+    for (auto point : boxPoint) {
         jobject jPoint = newJPoint(point);
         jniEnv->CallBooleanMethod(jList, jListAdd, jPoint);
     }
     return jList;
 }
 
-jobject OcrResultUtils::newJTextBox(jobject box, float score) {
-    jclass clazz = jniEnv->FindClass("com/benjaminwan/ocrlibrary/TextBox");
+jobject OcrResultUtils::getTextBlock(TextBlock &textBlock) {
+    jobject jBoxPint = newJBoxPoint(textBlock.boxPoint);
+    jfloat jBoxScore = (jfloat) textBlock.boxScore;
+    jfloat jAngleScore = (jfloat) textBlock.angleScore;
+    jdouble jAngleTime = (jdouble) textBlock.angleTime;
+    jstring jText = jniEnv->NewStringUTF(textBlock.text.c_str());
+    jobject jCharScores = newJScoreArray(textBlock.charScores);
+    jdouble jCrnnTime = (jdouble) textBlock.crnnTime;
+    jdouble jBlockTime = (jdouble) textBlock.blockTime;
+    jclass clazz = jniEnv->FindClass("com/benjaminwan/ocrlibrary/TextBlock");
     if (clazz == NULL) {
-        LOGE("TextBox class is null");
-        return NULL;
-    }
-    jmethodID constructor = jniEnv->GetMethodID(clazz, "<init>", "(Ljava/util/ArrayList;F)V");
-    jobject obj = jniEnv->NewObject(clazz, constructor, box, (jfloat) score);
-    return obj;
-}
-
-jobject OcrResultUtils::getTextBoxes(std::vector<TextBox> &textBoxes) {
-    jclass jListClass = newJListClass();
-    jmethodID jListConstructor = getListConstructor(jListClass);
-    jobject jList = jniEnv->NewObject(jListClass, jListConstructor);
-    jmethodID jListAdd = jniEnv->GetMethodID(jListClass, "add", "(Ljava/lang/Object;)Z");
-
-    for (int i = 0; i < textBoxes.size(); ++i) {
-        auto textBox = textBoxes[i];
-        jobject jbox = newJBox(textBox.box);
-        jobject jTextBox = newJTextBox(jbox, textBox.score);
-        jniEnv->CallBooleanMethod(jList, jListAdd, jTextBox);
-    }
-    return jList;
-}
-
-jobject OcrResultUtils::newJAngle(Angle &angle) {
-    jclass clazz = jniEnv->FindClass("com/benjaminwan/ocrlibrary/Angle");
-    if (clazz == NULL) {
-        LOGE("Angle class is null");
-        return NULL;
-    }
-    jmethodID constructor = jniEnv->GetMethodID(clazz, "<init>", "(IFD)V");
-    jobject obj = jniEnv->NewObject(clazz, constructor, angle.index, angle.score, angle.time);
-    return obj;
-}
-
-jobject OcrResultUtils::getAngles(std::vector<Angle> &angles) {
-    jclass jListClass = newJListClass();
-    jmethodID jListConstructor = getListConstructor(jListClass);
-    jobject jList = jniEnv->NewObject(jListClass, jListConstructor);
-    jmethodID jListAdd = jniEnv->GetMethodID(jListClass, "add", "(Ljava/lang/Object;)Z");
-
-    for (int i = 0; i < angles.size(); ++i) {
-        jobject jAngle = newJAngle(angles[i]);
-        jniEnv->CallBooleanMethod(jList, jListAdd, jAngle);
-    }
-    return jList;
-}
-
-jfloatArray OcrResultUtils::getJScoresArray(std::vector<float> &scores) {
-    jfloatArray jScores = jniEnv->NewFloatArray(scores.size());
-    jniEnv->SetFloatArrayRegion(jScores, 0, scores.size(), (jfloat *) scores.data());
-    return jScores;
-}
-
-jobject OcrResultUtils::newJTextLine(TextLine &textLine) {
-    jclass clazz = jniEnv->FindClass("com/benjaminwan/ocrlibrary/TextLine");
-    if (clazz == NULL) {
-        LOGE("TextLine class is null");
+        LOGE("TextBlock class is null");
         return NULL;
     }
     jmethodID constructor = jniEnv->GetMethodID(clazz, "<init>",
-                                                "(Ljava/lang/String;[FD)V");
-    jstring line = jniEnv->NewStringUTF(textLine.line.c_str());
-    jfloatArray array = getJScoresArray(textLine.scores);
-    jobject obj = jniEnv->NewObject(clazz, constructor, line, array, (jdouble) textLine.time);
+                                                "(Ljava/util/ArrayList;FIFDLjava/lang/String;[FDD)V");
+    jobject obj = jniEnv->NewObject(clazz, constructor, jBoxPint, jBoxScore, textBlock.angleIndex,
+                                    jAngleScore, jAngleTime, jText, jCharScores, jCrnnTime,
+                                    jBlockTime);
     return obj;
 }
 
-jobject OcrResultUtils::getTextLines(std::vector<TextLine> &textLines) {
+jobject OcrResultUtils::getTextBlocks(std::vector<TextBlock> &textBlocks) {
     jclass jListClass = newJListClass();
     jmethodID jListConstructor = getListConstructor(jListClass);
     jobject jList = jniEnv->NewObject(jListClass, jListConstructor);
     jmethodID jListAdd = jniEnv->GetMethodID(jListClass, "add", "(Ljava/lang/Object;)Z");
 
-    for (int i = 0; i < textLines.size(); ++i) {
-        jobject jTextLine = newJTextLine(textLines[i]);
-        jniEnv->CallBooleanMethod(jList, jListAdd, jTextLine);
+    for (int i = 0; i < textBlocks.size(); ++i) {
+        auto textBlock = textBlocks[i];
+        jobject jTextBlock = getTextBlock(textBlock);
+        jniEnv->CallBooleanMethod(jList, jListAdd, jTextBlock);
     }
-
     return jList;
+}
+
+jfloatArray OcrResultUtils::newJScoreArray(std::vector<float> &scores) {
+    jfloatArray jScores = jniEnv->NewFloatArray(scores.size());
+    jniEnv->SetFloatArrayRegion(jScores, 0, scores.size(), (jfloat *) scores.data());
+    return jScores;
 }

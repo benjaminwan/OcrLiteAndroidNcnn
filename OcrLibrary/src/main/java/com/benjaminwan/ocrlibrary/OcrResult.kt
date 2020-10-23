@@ -6,12 +6,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class OcrResult(
-    val textBoxes: ArrayList<TextBox>,
-    var textBoxTime: Double,
-    val angles: ArrayList<Angle>,
-    val textLines: ArrayList<TextLine>,
+    val dbNetTime: Double,
+    val textBlocks: ArrayList<TextBlock>,
     var boxImg: Bitmap,
-    var fullTime: Double,
+    var detectTime: Double,
     var strRes: String
 ) : Parcelable
 
@@ -19,30 +17,41 @@ data class OcrResult(
 data class Point(var x: Int, var y: Int) : Parcelable
 
 @Parcelize
-data class TextBox(val box: ArrayList<Point>, var score: Float) : Parcelable
-
-@Parcelize
-data class Angle(var index: Int, var scroe: Float, var time: Double) : Parcelable
-
-@Parcelize
-data class TextLine(var line: String, val scores: FloatArray, var time: Double) : Parcelable {
+data class TextBlock(
+    val boxPoint: ArrayList<Point>, var boxScore: Float,
+    val angleIndex: Int, val angleScore: Float, val angleTime: Double,
+    val text: String, val charScores: FloatArray, val crnnTime: Double,
+    val blockTime: Double
+) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as TextLine
+        other as TextBlock
 
-        if (line != other.line) return false
-        if (!scores.contentEquals(other.scores)) return false
-        if (time != other.time) return false
+        if (boxPoint != other.boxPoint) return false
+        if (boxScore != other.boxScore) return false
+        if (angleIndex != other.angleIndex) return false
+        if (angleScore != other.angleScore) return false
+        if (angleTime != other.angleTime) return false
+        if (text != other.text) return false
+        if (!charScores.contentEquals(other.charScores)) return false
+        if (crnnTime != other.crnnTime) return false
+        if (blockTime != other.blockTime) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = line.hashCode()
-        result = 31 * result + scores.contentHashCode()
-        result = 31 * result + time.hashCode()
+        var result = boxPoint.hashCode()
+        result = 31 * result + boxScore.hashCode()
+        result = 31 * result + angleIndex
+        result = 31 * result + angleScore.hashCode()
+        result = 31 * result + angleTime.hashCode()
+        result = 31 * result + text.hashCode()
+        result = 31 * result + charScores.contentHashCode()
+        result = 31 * result + crnnTime.hashCode()
+        result = 31 * result + blockTime.hashCode()
         return result
     }
 }

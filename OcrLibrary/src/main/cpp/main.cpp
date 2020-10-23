@@ -43,7 +43,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobj
                                           boxScoreThresh, boxThresh, minArea,
                                           scaleWidth, scaleHeight);
 
-    cv::cvtColor(ocrResult.textBoxImg, imgOut, cv::COLOR_BGR2RGBA);
+    cv::cvtColor(ocrResult.boxImg, imgOut, cv::COLOR_BGR2RGBA);
     matToBitmap(env, imgOut, output);
 
     return OcrResultUtils(env, ocrResult, output).getJObject();

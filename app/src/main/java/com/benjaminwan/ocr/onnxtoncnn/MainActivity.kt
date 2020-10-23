@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBa
             .doFinally { /*hideLoading()*/ }
             .autoDisposable(this)
             .subscribe { t1, t2 ->
-                timeTV.text = "${t1.fullTime.toInt()}ms"
+                timeTV.text = "${t1.detectTime.toInt()}ms"
                 resultTV.text = t1.strRes
                 val options =
                     RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)

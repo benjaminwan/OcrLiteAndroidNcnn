@@ -20,23 +20,15 @@ private:
 
     jmethodID getListConstructor(jclass clazz);
 
+    jobject getTextBlock(TextBlock &textBlock);
+
+    jobject getTextBlocks(std::vector<TextBlock> &textBlocks);
+
     jobject newJPoint(cv::Point &point);
 
-    jobject newJBox(std::vector<cv::Point> &box);
+    jobject newJBoxPoint(std::vector<cv::Point> &boxPoint);
 
-    jobject newJTextBox(jobject box, float score);
-
-    jobject getTextBoxes(std::vector<TextBox> &textBoxes);
-
-    jobject newJAngle(Angle &angle);
-
-    jobject getAngles(std::vector<Angle> &angles);
-
-    jfloatArray getJScoresArray(std::vector<float> &scores);
-
-    jobject newJTextLine(TextLine &textLine);
-
-    jobject getTextLines(std::vector<TextLine> &textLines);
+    jfloatArray newJScoreArray(std::vector<float> &scores);
 
 };
 
