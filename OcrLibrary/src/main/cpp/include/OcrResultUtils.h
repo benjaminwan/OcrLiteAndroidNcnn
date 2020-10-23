@@ -22,6 +22,10 @@ private:
 
     jobject newJPoint(cv::Point &point);
 
+    jobject newJBox(std::vector<cv::Point> &box);
+
+    jobject newJTextBox(jobject box, float score);
+
     jobject getTextBoxes(std::vector<TextBox> &textBoxes);
 
     jobject newJAngle(Angle &angle);

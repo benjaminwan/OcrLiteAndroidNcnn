@@ -66,17 +66,41 @@ jobject OcrResultUtils::newJPoint(cv::Point &point) {
     return obj;
 }
 
+jobject OcrResultUtils::newJBox(std::vector<cv::Point> &box) {
+    jclass jListClass = newJListClass();
+    jmethodID jListConstructor = getListConstructor(jListClass);
+    jobject jList = jniEnv->NewObject(jListClass, jListConstructor);
+    jmethodID jListAdd = jniEnv->GetMethodID(jListClass, "add", "(Ljava/lang/Object;)Z");
+
+    for (auto point : box) {
+        jobject jPoint = newJPoint(point);
+        jniEnv->CallBooleanMethod(jList, jListAdd, jPoint);
+    }
+    return jList;
+}
+
+jobject OcrResultUtils::newJTextBox(jobject box, float score) {
+    jclass clazz = jniEnv->FindClass("com/benjaminwan/ocrlibrary/TextBox");
+    if (clazz == NULL) {
+        LOGE("TextBox class is null");
+        return NULL;
+    }
+    jmethodID constructor = jniEnv->GetMethodID(clazz, "<init>", "(Ljava/util/ArrayList;F)V");
+    jobject obj = jniEnv->NewObject(clazz, constructor, box, (jfloat) score);
+    return obj;
+}
+
 jobject OcrResultUtils::getTextBoxes(std::vector<TextBox> &textBoxes) {
     jclass jListClass = newJListClass();
     jmethodID jListConstructor = getListConstructor(jListClass);
     jobject jList = jniEnv->NewObject(jListClass, jListConstructor);
     jmethodID jListAdd = jniEnv->GetMethodID(jListClass, "add", "(Ljava/lang/Object;)Z");
 
-    for (const auto &textBox : textBoxes) {
-        for (auto point : textBox.box) {
-            jobject jPoint = newJPoint(point);
-            jniEnv->CallBooleanMethod(jList, jListAdd, jPoint);
-        }
+    for (int i = 0; i < textBoxes.size(); ++i) {
+        auto textBox = textBoxes[i];
+        jobject jbox = newJBox(textBox.box);
+        jobject jTextBox = newJTextBox(jbox, textBox.score);
+        jniEnv->CallBooleanMethod(jList, jListAdd, jTextBox);
     }
     return jList;
 }

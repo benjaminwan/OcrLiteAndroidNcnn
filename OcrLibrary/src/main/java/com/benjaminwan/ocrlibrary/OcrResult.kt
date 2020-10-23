@@ -1,7 +1,10 @@
 package com.benjaminwan.ocrlibrary
 
 import android.graphics.Bitmap
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class OcrResult(
     val textBoxes: ArrayList<TextBox>,
     var textBoxTime: Double,
@@ -10,15 +13,19 @@ data class OcrResult(
     var boxImg: Bitmap,
     var fullTime: Double,
     var strRes: String
-)
+) : Parcelable
 
-data class Point(var x: Int, var y: Int)
+@Parcelize
+data class Point(var x: Int, var y: Int) : Parcelable
 
-data class TextBox(val box: ArrayList<Point>, var score: Float)
+@Parcelize
+data class TextBox(val box: ArrayList<Point>, var score: Float) : Parcelable
 
-data class Angle(var index: Int, var scroe: Float, var time: Double)
+@Parcelize
+data class Angle(var index: Int, var scroe: Float, var time: Double) : Parcelable
 
-data class TextLine(var line: String, val scores: FloatArray, var time: Double) {
+@Parcelize
+data class TextLine(var line: String, val scores: FloatArray, var time: Double) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
