@@ -182,21 +182,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBa
             )
             Log.i(TAG, "selectedImg=${img.height},${img.width} ${img.config}")
             val start = System.currentTimeMillis()
-            val text = ocrEngine.detect(img, boxImg, reSize)
+            val ocrResult = ocrEngine.detect(img, boxImg, reSize)
             val end = System.currentTimeMillis()
             val time = "time=${end - start}ms"
-            OcrResult(boxImg, text, time)
+            ocrResult
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }
             .doFinally { /*hideLoading()*/ }
             .autoDisposable(this)
             .subscribe { t1, t2 ->
-                timeTV.text = t1.time
-                resultTV.text = t1.text
+                timeTV.text = "${t1.fullTime.toInt()}ms"
+                resultTV.text = t1.strRes
                 val options =
                     RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
-                Glide.with(this).load(t1.bitmap).apply(options).into(imageView)
+                Glide.with(this).load(t1.boxImg).apply(options).into(imageView)
+                Log.i(TAG, "$t1")
             }
     }
 
