@@ -1,7 +1,5 @@
 package com.benjaminwan.ocr.onnxtoncnn
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -22,8 +20,6 @@ import com.benjaminwan.ocr.onnxtoncnn.utils.showToast
 import com.benjaminwan.ocrlibrary.OcrEngine
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -121,7 +117,7 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
                 val result = ocrResult ?: return
                 DebugDialog.instance
                     .setTitle("调试信息")
-                    .setTextBlocks(result.textBlocks)
+                    .setResult(result)
                     .show(supportFragmentManager, "DebugDialog")
             }
             else -> {

@@ -80,7 +80,7 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
                 val result = ocrResult ?: return
                 DebugDialog.instance
                     .setTitle("调试信息")
-                    .setTextBlocks(result.textBlocks)
+                    .setResult(result)
                     .show(supportFragmentManager, "DebugDialog")
             }
             else -> {

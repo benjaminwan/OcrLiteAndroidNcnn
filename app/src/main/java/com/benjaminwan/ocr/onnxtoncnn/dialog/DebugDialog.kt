@@ -11,10 +11,12 @@ import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.epoxy.EpoxyVisibilityTracker
 import com.benjaminwan.ocr.onnxtoncnn.R
 import com.benjaminwan.ocr.onnxtoncnn.models.DebugItemView
+import com.benjaminwan.ocr.onnxtoncnn.models.dbNetTimeItemView
 import com.benjaminwan.ocr.onnxtoncnn.models.debugItemView
 import com.benjaminwan.ocr.onnxtoncnn.utils.format
 import com.benjaminwan.ocr.onnxtoncnn.utils.hideSoftInput
 import com.benjaminwan.ocr.onnxtoncnn.utils.setMarginItemDecoration
+import com.benjaminwan.ocrlibrary.OcrResult
 import com.benjaminwan.ocrlibrary.TextBlock
 import kotlinx.android.synthetic.main.dialog_debug.*
 import kotlinx.android.synthetic.main.dialog_text_result.*
@@ -37,6 +39,7 @@ class DebugDialog : BaseDialog(), View.OnClickListener {
 
     private var title: String = ""
     private var textBlocks: MutableList<TextBlock> = mutableListOf()
+    private var dbnetTime: Double = 0.0
     private lateinit var recyclerView: EpoxyRecyclerView
 
     override fun onCreateView(
@@ -63,6 +66,10 @@ class DebugDialog : BaseDialog(), View.OnClickListener {
         debugRV.setMarginItemDecoration(2, 1, 2, 1)
 
         debugRV.withModels {
+            dbNetTimeItemView {
+                id("dbnet time item")
+                dbNetTimeStr(dbnetTime.format("#0.00") + "ms")
+            }
             textBlocks.withIndex().forEach { (id, item) ->
                 val boxPointStr = item.boxPoint.map { "[${it.x},${it.y}]" }.joinToString()
                 val charScoresStr = item.charScores.map { it.format("#0.00") }.joinToString()
@@ -95,9 +102,10 @@ class DebugDialog : BaseDialog(), View.OnClickListener {
         return this
     }
 
-    fun setTextBlocks(input: List<TextBlock>): DebugDialog {
+    fun setResult(result: OcrResult): DebugDialog {
         textBlocks.clear()
-        textBlocks.addAll(input)
+        textBlocks.addAll(result.textBlocks)
+        dbnetTime = result.dbNetTime
         return this
     }
 
