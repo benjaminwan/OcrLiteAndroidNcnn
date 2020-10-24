@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
             R.id.cameraBtn -> {
-
+                val intent = Intent(this, CameraActivity::class.java)
+                startActivity(intent)
             }
             else -> {
             }

@@ -7,11 +7,39 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/imageView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:scaleType="fillCenter" />
+
+        <jsc.kit.cameramask.CameraLensView
+            android:id="@+id/cameraLensView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:clvCameraLensGravity="center"
+            app:clvCameraLensHeightWeight="{9,10}"
+            app:clvCameraLensShape="rectangle"
+            app:clvCameraLensTopMargin="0dp"
+            app:clvCameraLensWidthWeight="{9,10}"
+            app:clvShowBoxAngle="true"
+            app:clvText="请把要识别的内容对准扫描框"
+            app:clvTextLocation="belowCameraLens"
+            app:clvTextMathParent="true"
+            app:clvTextSize="12sp"
+            app:clvTextVerticalMargin="6dp" />
+
+        <ImageView
+            android:id="@+id/loadingImg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/timeTV"
@@ -176,11 +204,11 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/selectBtn"
+            android:id="@+id/clearBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="选图"
+            android:text="清除"
             android:textSize="12sp" />
 
         <Button
