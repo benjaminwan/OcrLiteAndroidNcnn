@@ -47,6 +47,9 @@ class TextResultDialog : BaseDialog(), View.OnClickListener {
         negativeBtn.setOnClickListener(this)
         positiveBtn.setOnClickListener(this)
         contentEdit.setText(content)
+        if (title.isNotEmpty()) {
+            titleTV.text = title
+        }
     }
 
     fun setTitle(title: String): TextResultDialog {

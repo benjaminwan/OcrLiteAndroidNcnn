@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import com.benjaminwan.ocr.onnxtoncnn.dialog.DebugDialog
 import com.benjaminwan.ocr.onnxtoncnn.dialog.TextResultDialog
 import com.benjaminwan.ocrlibrary.OcrEngine
 import com.benjaminwan.ocrlibrary.OcrResult
@@ -74,6 +75,13 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
                     .setTitle("识别结果")
                     .setContent(result.strRes)
                     .show(supportFragmentManager, "TextResultDialog")
+            }
+            R.id.debugBtn -> {
+                val result = ocrResult ?: return
+                DebugDialog.instance
+                    .setTitle("调试信息")
+                    .setTextBlocks(result.textBlocks)
+                    .show(supportFragmentManager, "DebugDialog")
             }
             else -> {
             }
