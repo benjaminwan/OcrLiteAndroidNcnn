@@ -72,4 +72,5 @@ dependencies {
     implementation "com.uber.autodispose:autodispose-android:$autodispose_version"
     implementation "com.uber.autodispose:autodispose-android-archcomponents:$autodispose_version"
 
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }
