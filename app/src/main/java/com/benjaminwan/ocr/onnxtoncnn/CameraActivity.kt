@@ -265,7 +265,7 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
 
                 // Bind use cases to camera
                 camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-                preview?.setSurfaceProvider(viewFinder.createSurfaceProvider())
+                preview?.setSurfaceProvider(viewFinder.surfaceProvider)
             } catch (exc: Exception) {
                 Log.e("Use case binding failed", exc.message.toString())
             }
