@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.benjaminwan.ocr.onnxtoncnn.R
 import com.benjaminwan.ocr.onnxtoncnn.utils.hideSoftInput
+import com.benjaminwan.ocr.onnxtoncnn.utils.toClipboard
 import kotlinx.android.synthetic.main.dialog_text_result.*
 
 class TextResultDialog : BaseDialog(), View.OnClickListener {
@@ -68,6 +69,7 @@ class TextResultDialog : BaseDialog(), View.OnClickListener {
         if (resId == R.id.negativeBtn) {
             dismiss()
         } else if (resId == R.id.positiveBtn) {
+            requireContext().toClipboard(content)
             this.dismiss()
         }
     }
