@@ -87,10 +87,10 @@ struct OcrResult {
             std::vector<TextBlock> textBlocks,
             double dbNetTime,
             cv::Mat boxImg,
-            std::string strRes,
-            double fullTime
+            double detectTime,
+            std::string strRes
     ) : textBlocks(textBlocks), dbNetTime(dbNetTime),
-        boxImg(boxImg), strRes(strRes), detectTime(detectTime) {};
+        boxImg(boxImg), detectTime(detectTime), strRes(strRes) {};
 };
 
 #endif //__OCR_STRUCT_H__

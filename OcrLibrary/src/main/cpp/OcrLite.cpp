@@ -250,9 +250,9 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                                                   minArea);
     LOGI("TextBoxesSize(%ld)\n", textBoxes.size());
 
-    double endTextBoxesTime = getCurrentTime();
-    double textBoxesTime = endTextBoxesTime - startTime;
-    LOGI("getTextBoxesTime(%fms)\n", textBoxesTime);
+    double endDbNetTime = getCurrentTime();
+    double dbNetTime = endDbNetTime - startTime;
+    LOGI("dbNetTime(%fms)\n", dbNetTime);
 
     std::vector<TextBlock> textBlocks;
     std::string strRes;
@@ -299,10 +299,10 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         }
 
         //getTextLine
-        double startTextLine = getCurrentTime();
+        double startCrnnTime = getCurrentTime();
         TextLine textLine = getTextLine(partImg);
-        double endTextLine = getCurrentTime();
-        textLine.time = endTextLine - startTextLine;
+        double endCrnnTime = getCurrentTime();
+        textLine.time = endCrnnTime - startCrnnTime;
 
         //Log textLine
         LOGI("textLine(%s)\n", textLine.text.c_str());
@@ -312,7 +312,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
             txtScores << " ," << textLine.charScores[s];
         }
         LOGI("textScores{%s}\n", std::string(txtScores.str()).c_str());
-        LOGI("getTextLineTime(%fms)\n", textLine.time);
+        LOGI("crnnTime(%fms)\n", textLine.time);
 
         //Log TextBox[i]Time
         double endTextBox = getCurrentTime();
@@ -323,7 +323,8 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         strRes.append("\n");
 
         TextBlock textBlock(textBoxes[i].boxPoint, textBoxes[i].score, angle.index, angle.score,
-                            angle.time, textLine.text, textLine.charScores, textLine.time, timeTextBox);
+                            angle.time, textLine.text, textLine.charScores, textLine.time,
+                            timeTextBox);
         textBlocks.emplace_back(textBlock);
     }
     double endTime = getCurrentTime();
@@ -339,5 +340,5 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         textBoxImg = textBoxPaddingImg;
     }
 
-    return OcrResult(textBlocks, textBoxesTime, textBoxImg, strRes, fullTime);
+    return OcrResult(textBlocks, dbNetTime, textBoxImg, fullTime, strRes);
 }
