@@ -80,9 +80,9 @@ OcrLite::getTextBoxes(cv::Mat &src, ScaleParam &s,
                       float boxScoreThresh, float boxThresh, float minArea, float unClipRatio) {
     cv::Mat srcResize;
     cv::resize(src, srcResize, cv::Size(s.dstWidth, s.dstHeight));
-    ncnn::Mat input = ncnn::Mat::from_pixels_resize(src.data, ncnn::Mat::PIXEL_BGR2RGB,
-                                                    src.cols, src.rows,
-                                                    s.dstWidth, s.dstHeight);
+
+    ncnn::Mat input = ncnn::Mat::from_pixels(srcResize.data, ncnn::Mat::PIXEL_BGR2RGB,
+                                             srcResize.cols, srcResize.rows);
 
     input.substract_mean_normalize(meanValsDBNet, normValsDBNet);
     ncnn::Extractor extractor = dbNet.create_extractor();
@@ -286,7 +286,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
 
         //Log Angle
         LOGI("angle(index=%d, score=%f)\n", angle.index, angle.score);
-        LOGI("getAngleTime(%fms)\n", angle.time);
+        LOGI("angleTime(%fms)\n", angle.time);
 
         //Rotate Img
         if (angle.index == 0) {
