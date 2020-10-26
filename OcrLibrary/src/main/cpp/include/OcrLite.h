@@ -13,11 +13,16 @@ public:
 
     ~OcrLite();
 
+    void initLogger(bool isDebug);
+
+    void Logger(const char *format, ...);
+
     OcrResult detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                      float boxScoreThresh, float boxThresh, float minArea,
                      float unClipRatio);
 
 private:
+    bool isLOG = true;
     ncnn::Net dbNet, angleNet, crnnNet;
     int numThread = 4;
 

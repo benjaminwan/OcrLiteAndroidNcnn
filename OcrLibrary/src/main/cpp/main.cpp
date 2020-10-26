@@ -10,6 +10,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_init(JNIEnv *env, jobject thiz, jobjec
                                                jint numThread) {
 
     ocrLite = new OcrLite(env, assetManager, numThread);
+    ocrLite->initLogger(false);
     return JNI_TRUE;
 }
 
@@ -29,7 +30,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobj
                                                  jint padding, jint reSize,
                                                  jfloat boxScoreThresh, jfloat boxThresh,
                                                  jfloat minArea, jfloat unClipRatio) {
-    LOGI("padding=%d,reSize=%d,boxScoreThresh=%f,boxThresh=%f,minArea=%f,unClipRatio=%f",
+    ocrLite->Logger("padding=%d,reSize=%d,boxScoreThresh=%f,boxThresh=%f,minArea=%f,unClipRatio=%f",
          padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio);
     cv::Mat imgRGBA, imgBGR, imgOut;
     bitmapToMat(env, input, imgRGBA);

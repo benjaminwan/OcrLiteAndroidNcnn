@@ -50,18 +50,14 @@ OcrLite::OcrLite(JNIEnv *env, jobject assetManager, int numOfThread) {
         ret5 != 0 || ret6 != 0) {
         LOGE("# %d  %d  %d  %d %d  %d", ret1, ret2, ret3, ret4, ret5, ret6);
     }
-    //int lineCount = 0;
-    //load keys
+
     char *buffer = readKeysFromAssets(mgr);
     if (buffer != NULL) {
         std::istringstream inStr(buffer);
         std::string line;
-        //LOGI(" txt file  found");
         while (getline(inStr, line)) {
             keys.emplace_back(line);
-            //lineCount++;
         }
-        //LOGI("lineCount = %d", lineCount);
         free(buffer);
     } else {
         LOGE(" txt file not found");
@@ -73,6 +69,20 @@ OcrLite::~OcrLite() {
     dbNet.clear();
     angleNet.clear();
     crnnNet.clear();
+}
+
+void OcrLite::initLogger(bool isDebug) {
+    isLOG = isDebug;
+}
+
+void OcrLite::Logger(const char *format, ...) {
+    if (!isLOG) return;
+    char *buffer = (char *) malloc(4096);
+    va_list args;
+    va_start(args, format);
+    vsprintf(buffer, format, args);
+    va_end(args);
+    if (isLOG) LOGI("%s", buffer);
 }
 
 std::vector<TextBox>
@@ -231,31 +241,31 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
     cv::Mat textBoxPaddingImg = src.clone();
     int thickness = getThickness(src);
 
-    LOGI("=====Start detect=====");
-    LOGI("ScaleParam(sw:%d,sh:%d,dw:%d,dH%d,%f,%f)", scale.srcWidth, scale.srcHeight,
+    Logger("=====Start detect=====");
+    Logger("ScaleParam(sw:%d,sh:%d,dw:%d,dH%d,%f,%f)", scale.srcWidth, scale.srcHeight,
          scale.dstWidth, scale.dstHeight,
          scale.scaleWidth, scale.scaleHeight);
 
     double startTime = getCurrentTime();
     std::vector<TextBox> textBoxes = getTextBoxes(src, scale, boxScoreThresh, boxThresh,
                                                   minArea, unClipRatio);
-    LOGI("TextBoxesSize(%ld)\n", textBoxes.size());
+    Logger("TextBoxesSize(%ld)\n", textBoxes.size());
 
     double endDbNetTime = getCurrentTime();
     double dbNetTime = endDbNetTime - startTime;
-    LOGI("dbNetTime(%fms)\n", dbNetTime);
+    Logger("dbNetTime(%fms)\n", dbNetTime);
 
     std::vector<TextBlock> textBlocks;
     std::string strRes;
     for (int i = 0; i < textBoxes.size(); ++i) {
-        LOGI("-----TextBox[%d] score(%f)-----\n", i, textBoxes[i].score);
+        Logger("-----TextBox[%d] score(%f)-----\n", i, textBoxes[i].score);
         double startTextBox = getCurrentTime();
         cv::Mat partImg;
 
         //use RRLib
         /*cv::RotatedRect partRect = getPartRect(textBoxes[i].boxPoint, scaleWidth,
                                                scaleHeight);
-        LOGI("partRect(center.x=%f, center.y=%f, width=%f, height=%f, angle=%f)\n",
+        Logger("partRect(center.x=%f, center.y=%f, width=%f, height=%f, angle=%f)\n",
              partRect.center.x, partRect.center.y,
              partRect.size.width, partRect.size.height,
              partRect.angle);
@@ -266,7 +276,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         partImg = GetRotateCropImage(src, textBoxes[i].boxPoint);
         drawTextBox(textBoxPaddingImg, textBoxes[i].boxPoint, thickness);
 
-        LOGI("TextBoxPos([x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d])\n",
+        Logger("TextBoxPos([x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d])\n",
              textBoxes[i].boxPoint[0].x, textBoxes[i].boxPoint[0].y,
              textBoxes[i].boxPoint[1].x, textBoxes[i].boxPoint[1].y,
              textBoxes[i].boxPoint[2].x, textBoxes[i].boxPoint[2].y,
@@ -285,8 +295,8 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         angle.time = endAngle - startAngle;
 
         //Log Angle
-        LOGI("angle(index=%d, score=%f)\n", angle.index, angle.score);
-        LOGI("angleTime(%fms)\n", angle.time);
+        Logger("angle(index=%d, score=%f)\n", angle.index, angle.score);
+        Logger("angleTime(%fms)\n", angle.time);
 
         //Rotate Img
         if (angle.index == 0) {
@@ -300,19 +310,19 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         textLine.time = endCrnnTime - startCrnnTime;
 
         //Log textLine
-        LOGI("textLine(%s)\n", textLine.text.c_str());
+        Logger("textLine(%s)\n", textLine.text.c_str());
         std::ostringstream txtScores;
         for (int s = 0; s < textLine.charScores.size(); ++s) {
             if (s == 0) txtScores << textLine.charScores[s];
             txtScores << " ," << textLine.charScores[s];
         }
-        LOGI("textScores{%s}\n", std::string(txtScores.str()).c_str());
-        LOGI("crnnTime(%fms)\n", textLine.time);
+        Logger("textScores{%s}\n", std::string(txtScores.str()).c_str());
+        Logger("crnnTime(%fms)\n", textLine.time);
 
         //Log TextBox[i]Time
         double endTextBox = getCurrentTime();
         double timeTextBox = endTextBox - startTextBox;
-        LOGI("TextBox[%i]Time(%fms)\n", i, timeTextBox);
+        Logger("TextBox[%i]Time(%fms)\n", i, timeTextBox);
 
         strRes.append(textLine.text);
         strRes.append("\n");
@@ -324,8 +334,8 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
     }
     double endTime = getCurrentTime();
     double fullTime = endTime - startTime;
-    LOGI("=====End detect=====\n");
-    LOGI("FullDetectTime(%fms)\n", fullTime);
+    Logger("=====End detect=====\n");
+    Logger("FullDetectTime(%fms)\n", fullTime);
 
     //cropped to original size
     cv::Mat textBoxImg;
