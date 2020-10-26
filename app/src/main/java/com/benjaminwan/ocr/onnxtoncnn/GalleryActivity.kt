@@ -40,15 +40,13 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         updateBoxScoreThresh((ocrEngine.boxScoreThresh * 100).toInt())
         updateBoxThresh((ocrEngine.boxThresh * 100).toInt())
         updateMinArea(ocrEngine.miniArea.toInt())
-        updateScaleWidth((ocrEngine.scaleWidth * 10).toInt())
-        updateScaleHeight((ocrEngine.scaleHeight * 10).toInt())
+        updateUnClipRatio((ocrEngine.unClipRatio * 10).toInt())
         paddingSeekBar.setOnSeekBarChangeListener(this)
         boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
         boxThreshSeekBar.setOnSeekBarChangeListener(this)
         minAreaSeekBar.setOnSeekBarChangeListener(this)
         scaleSeekBar.setOnSeekBarChangeListener(this)
-        scaleWidthSeekBar.setOnSeekBarChangeListener(this)
-        scaleHeightSeekBar.setOnSeekBarChangeListener(this)
+        scaleUnClipRatioSeekBar.setOnSeekBarChangeListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -106,11 +104,8 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
             R.id.minAreaSeekBar -> {
                 updateMinArea(progress)
             }
-            R.id.scaleWidthSeekBar -> {
-                updateScaleWidth(progress)
-            }
-            R.id.scaleHeightSeekBar -> {
-                updateScaleHeight(progress)
+            R.id.scaleUnClipRatioSeekBar -> {
+                updateUnClipRatio(progress)
             }
             else -> {
             }
@@ -157,18 +152,11 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         ocrEngine.miniArea = progress.toFloat()
     }
 
-    private fun updateScaleWidth(progress: Int) {
+    private fun updateUnClipRatio(progress: Int) {
         val scale = progress.toFloat() / 10.toFloat()
-        scaleWidthTv.text = "${getString(R.string.box_scale_width)}:$scale"
-        ocrEngine.scaleWidth = scale
+        unClipRatioTv.text = "${getString(R.string.box_un_clip_ratio)}:$scale"
+        ocrEngine.unClipRatio = scale
     }
-
-    private fun updateScaleHeight(progress: Int) {
-        val scale = progress.toFloat() / 10.toFloat()
-        scaleHeightTv.text = "${getString(R.string.box_scale_height)}:$scale"
-        ocrEngine.scaleHeight = scale
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

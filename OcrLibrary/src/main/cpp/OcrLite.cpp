@@ -1,11 +1,9 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
-#include "RRLib.h"
 #include "OcrLite.h"
 #include "OcrUtils.h"
 #include <iosfwd>
-
-using namespace RRLib;
+#include <opencv/cv.hpp>
 
 char *readKeysFromAssets(AAssetManager *mgr) {
     //LOGI("readKeysFromAssets start...");
@@ -79,7 +77,7 @@ OcrLite::~OcrLite() {
 
 std::vector<TextBox>
 OcrLite::getTextBoxes(cv::Mat &src, ScaleParam &s,
-                      float boxScoreThresh, float boxThresh, float minArea) {
+                      float boxScoreThresh, float boxThresh, float minArea, float unClipRatio) {
     cv::Mat srcResize;
     cv::resize(src, srcResize, cv::Size(s.dstWidth, s.dstHeight));
     ncnn::Mat input = ncnn::Mat::from_pixels_resize(src.data, ncnn::Mat::PIXEL_BGR2RGB,
@@ -113,6 +111,15 @@ OcrLite::getTextBoxes(cv::Mat &src, ScaleParam &s,
 
         if (score < boxScoreThresh)
             continue;
+        //---use clipper start---
+        std::vector<cv::Point> newbox;
+        unClip(minBox, allEdgeSize, newbox, unClipRatio);
+
+        getMiniBoxes(newbox, minBox, minEdgeSize, allEdgeSize);
+
+        if (minEdgeSize < minArea + 2)
+            continue;
+        //---use clipper end---
 
         for (int j = 0; j < minBox.size(); ++j) {
             minBox[j].x = (minBox[j].x / s.scaleWidth);
@@ -216,30 +223,14 @@ TextLine OcrLite::getTextLine(cv::Mat &src) {
     return scoreToTextLine((float *) blob263.data, blob263.h, blob263.w);
 }
 
-cv::Mat adjustAngleImg(cv::Mat &src, int dstWidth, int dstHeight) {
-    cv::Mat srcResize;
-    float scale = (float) dstHeight / (float) src.rows;
-    int angleWidth = int((float) src.cols * scale);
-    cv::resize(src, srcResize, cv::Size(angleWidth, dstHeight));
-    cv::Mat srcFit = cv::Mat(dstHeight, dstWidth, CV_8UC3, cv::Scalar(255, 255, 255));
-    if (angleWidth < dstWidth) {
-        cv::Rect rect(0, 0, srcResize.cols, srcResize.rows);
-        srcResize.copyTo(srcFit(rect));
-    } else {
-        cv::Rect rect(0, 0, dstWidth, dstHeight);
-        srcResize(rect).copyTo(srcFit);
-    }
-    return srcFit;
-}
 
 OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                           float boxScoreThresh, float boxThresh, float minArea,
-                          float scaleWidth, float scaleHeight) {
+                          float unClipRatio) {
 
     cv::Mat textBoxPaddingImg = src.clone();
-    //文字框 线宽
     int thickness = getThickness(src);
-    //图像文字分割
+
     LOGI("=====Start detect=====");
     LOGI("ScaleParam(sw:%d,sh:%d,dw:%d,dH%d,%f,%f)", scale.srcWidth, scale.srcHeight,
          scale.dstWidth, scale.dstHeight,
@@ -247,7 +238,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
 
     double startTime = getCurrentTime();
     std::vector<TextBox> textBoxes = getTextBoxes(src, scale, boxScoreThresh, boxThresh,
-                                                  minArea);
+                                                  minArea, unClipRatio);
     LOGI("TextBoxesSize(%ld)\n", textBoxes.size());
 
     double endDbNetTime = getCurrentTime();
@@ -260,7 +251,9 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         LOGI("-----TextBox[%d] score(%f)-----\n", i, textBoxes[i].score);
         double startTextBox = getCurrentTime();
         cv::Mat partImg;
-        cv::RotatedRect partRect = getPartRect(textBoxes[i].boxPoint, scaleWidth,
+
+        //use RRLib
+        /*cv::RotatedRect partRect = getPartRect(textBoxes[i].boxPoint, scaleWidth,
                                                scaleHeight);
         LOGI("partRect(center.x=%f, center.y=%f, width=%f, height=%f, angle=%f)\n",
              partRect.center.x, partRect.center.y,
@@ -268,9 +261,11 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
              partRect.angle);
 
         RRLib::getRotRectImg(partRect, src, partImg);
+        drawTextBox(textBoxPaddingImg, partRect, thickness);*/
+        //use clipper
+        partImg = GetRotateCropImage(src, textBoxes[i].boxPoint);
+        drawTextBox(textBoxPaddingImg, textBoxes[i].boxPoint, thickness);
 
-        //drawTextBox
-        drawTextBox(textBoxPaddingImg, partRect, thickness);
         LOGI("TextBoxPos([x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d])\n",
              textBoxes[i].boxPoint[0].x, textBoxes[i].boxPoint[0].y,
              textBoxes[i].boxPoint[1].x, textBoxes[i].boxPoint[1].y,

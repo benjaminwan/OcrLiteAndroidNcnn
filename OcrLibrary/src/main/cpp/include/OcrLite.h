@@ -15,7 +15,7 @@ public:
 
     OcrResult detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                      float boxScoreThresh, float boxThresh, float minArea,
-                     float scaleWidth, float scaleHeight);
+                     float unClipRatio);
 
 private:
     ncnn::Net dbNet, angleNet, crnnNet;
@@ -36,7 +36,7 @@ private:
     std::vector<std::string> keys;
 
     std::vector<TextBox> getTextBoxes(cv::Mat &src, ScaleParam &s,
-                                      float boxScoreThresh, float boxThresh, float minArea);
+                                      float boxScoreThresh, float boxThresh, float minArea, float unClipRatio);
 
     Angle getAngle(cv::Mat &src);
 

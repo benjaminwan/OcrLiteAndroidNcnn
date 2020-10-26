@@ -25,6 +25,22 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_camera.*
+import kotlinx.android.synthetic.main.activity_camera.boxScoreThreshSeekBar
+import kotlinx.android.synthetic.main.activity_camera.boxScoreThreshTv
+import kotlinx.android.synthetic.main.activity_camera.boxThreshSeekBar
+import kotlinx.android.synthetic.main.activity_camera.boxThreshTv
+import kotlinx.android.synthetic.main.activity_camera.debugBtn
+import kotlinx.android.synthetic.main.activity_camera.detectBtn
+import kotlinx.android.synthetic.main.activity_camera.minAreaSeekBar
+import kotlinx.android.synthetic.main.activity_camera.minAreaTv
+import kotlinx.android.synthetic.main.activity_camera.paddingSeekBar
+import kotlinx.android.synthetic.main.activity_camera.paddingTv
+import kotlinx.android.synthetic.main.activity_camera.resultBtn
+import kotlinx.android.synthetic.main.activity_camera.scaleSeekBar
+import kotlinx.android.synthetic.main.activity_camera.scaleTv
+import kotlinx.android.synthetic.main.activity_camera.scaleUnClipRatioSeekBar
+import kotlinx.android.synthetic.main.activity_camera.unClipRatioTv
+import kotlinx.android.synthetic.main.activity_camera.timeTV
 import kotlin.math.max
 
 class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -49,15 +65,13 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
         updateBoxScoreThresh((ocrEngine.boxScoreThresh * 100).toInt())
         updateBoxThresh((ocrEngine.boxThresh * 100).toInt())
         updateMinArea(ocrEngine.miniArea.toInt())
-        updateScaleWidth((ocrEngine.scaleWidth * 10).toInt())
-        updateScaleHeight((ocrEngine.scaleHeight * 10).toInt())
+        updateUnClipRatio((ocrEngine.unClipRatio * 10).toInt())
         paddingSeekBar.setOnSeekBarChangeListener(this)
         boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
         boxThreshSeekBar.setOnSeekBarChangeListener(this)
         minAreaSeekBar.setOnSeekBarChangeListener(this)
         scaleSeekBar.setOnSeekBarChangeListener(this)
-        scaleWidthSeekBar.setOnSeekBarChangeListener(this)
-        scaleHeightSeekBar.setOnSeekBarChangeListener(this)
+        scaleUnClipRatioSeekBar.setOnSeekBarChangeListener(this)
         viewFinder = findViewById(R.id.viewFinder)
         cameraLensView.postDelayed({
             updateScale(100)
@@ -143,11 +157,8 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
             R.id.minAreaSeekBar -> {
                 updateMinArea(progress)
             }
-            R.id.scaleWidthSeekBar -> {
-                updateScaleWidth(progress)
-            }
-            R.id.scaleHeightSeekBar -> {
-                updateScaleHeight(progress)
+            R.id.scaleUnClipRatioSeekBar -> {
+                updateUnClipRatio(progress)
             }
             else -> {
             }
@@ -192,16 +203,10 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
         ocrEngine.miniArea = progress.toFloat()
     }
 
-    private fun updateScaleWidth(progress: Int) {
+    private fun updateUnClipRatio(progress: Int) {
         val scale = progress.toFloat() / 10.toFloat()
-        scaleWidthTv.text = "${getString(R.string.box_scale_width)}:$scale"
-        ocrEngine.scaleWidth = scale
-    }
-
-    private fun updateScaleHeight(progress: Int) {
-        val scale = progress.toFloat() / 10.toFloat()
-        scaleHeightTv.text = "${getString(R.string.box_scale_height)}:$scale"
-        ocrEngine.scaleHeight = scale
+        unClipRatioTv.text = "${getString(R.string.box_un_clip_ratio)}:$scale"
+        ocrEngine.unClipRatio = scale
     }
 
     private fun showLoading() {
