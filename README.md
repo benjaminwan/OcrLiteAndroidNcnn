@@ -38,7 +38,7 @@ ChOcrLiteAndroidOnnx/OcrLibrary/src/main/sharedLibs
 └── x86_64
     └── libopencv_java3.so
 ```
-5.  [模型下载地址](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/ncnn_project/models)
+5.  [模型下载地址](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/models_ncnn)
 ```
 ChOcrLiteAndroidOnnxToNcnn/OcrLibrary/src/main/assets
 ├── angle_op.bin
