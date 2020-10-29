@@ -19,7 +19,7 @@ public:
 
     OcrResult detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                      float boxScoreThresh, float boxThresh, float minArea,
-                     float unClipRatio);
+                     float unClipRatio, bool doAngle);
 
 private:
     bool isLOG = true;

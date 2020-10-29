@@ -100,4 +100,7 @@ dependencies {
     //runWithPermissions 申请权限
     implementation 'com.afollestad.assent:core:3.0.0-RC4'
     implementation 'com.afollestad.assent:rationales:3.0.0-RC4'
+
+    //Logger
+    implementation 'com.orhanobut:logger:2.2.0'
 }

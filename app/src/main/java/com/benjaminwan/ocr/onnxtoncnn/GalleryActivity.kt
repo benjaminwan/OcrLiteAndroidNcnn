@@ -8,13 +8,16 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import com.benjaminwan.ocr.onnxtoncnn.app.App
 import com.benjaminwan.ocr.onnxtoncnn.dialog.DebugDialog
 import com.benjaminwan.ocr.onnxtoncnn.dialog.TextResultDialog
+import com.benjaminwan.ocr.onnxtoncnn.utils.decodeUri
 import com.benjaminwan.ocrlibrary.OcrEngine
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.orhanobut.logger.Logger
 import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,29 +27,32 @@ import kotlin.math.max
 
 class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private lateinit var ocrEngine: OcrEngine
     private var selectedImg: Bitmap? = null
     private var ocrResult: OcrResult? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
-        ocrEngine = OcrEngine(applicationContext)
+        App.ocrEngine.doAngle = true//相册识别时，默认启用文字方向检测
         selectBtn.setOnClickListener(this)
         detectBtn.setOnClickListener(this)
         resultBtn.setOnClickListener(this)
         debugBtn.setOnClickListener(this)
-        updatePadding(ocrEngine.padding)
-        updateBoxScoreThresh((ocrEngine.boxScoreThresh * 100).toInt())
-        updateBoxThresh((ocrEngine.boxThresh * 100).toInt())
-        updateMinArea(ocrEngine.miniArea.toInt())
-        updateUnClipRatio((ocrEngine.unClipRatio * 10).toInt())
+        doAngleSw.isChecked = App.ocrEngine.doAngle
+        updatePadding(App.ocrEngine.padding)
+        updateBoxScoreThresh((App.ocrEngine.boxScoreThresh * 100).toInt())
+        updateBoxThresh((App.ocrEngine.boxThresh * 100).toInt())
+        updateMinArea(App.ocrEngine.miniArea.toInt())
+        updateUnClipRatio((App.ocrEngine.unClipRatio * 10).toInt())
         paddingSeekBar.setOnSeekBarChangeListener(this)
         boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
         boxThreshSeekBar.setOnSeekBarChangeListener(this)
         minAreaSeekBar.setOnSeekBarChangeListener(this)
         scaleSeekBar.setOnSeekBarChangeListener(this)
         scaleUnClipRatioSeekBar.setOnSeekBarChangeListener(this)
+        doAngleSw.setOnCheckedChangeListener { _, isChecked ->
+            App.ocrEngine.doAngle = isChecked
+        }
     }
 
     override fun onClick(view: View?) {
@@ -132,30 +138,30 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
 
     private fun updatePadding(progress: Int) {
         paddingTv.text = "Padding:$progress"
-        ocrEngine.padding = progress
+        App.ocrEngine.padding = progress
     }
 
     private fun updateBoxScoreThresh(progress: Int) {
         val thresh = progress.toFloat() / 100.toFloat()
         boxScoreThreshTv.text = "${getString(R.string.box_score_thresh)}:$thresh"
-        ocrEngine.boxScoreThresh = thresh
+        App.ocrEngine.boxScoreThresh = thresh
     }
 
     private fun updateBoxThresh(progress: Int) {
         val thresh = progress.toFloat() / 100.toFloat()
         boxThreshTv.text = "BoxThresh:$thresh"
-        ocrEngine.boxThresh = thresh
+        App.ocrEngine.boxThresh = thresh
     }
 
     private fun updateMinArea(progress: Int) {
         minAreaTv.text = "${getString(R.string.min_area)}:$progress"
-        ocrEngine.miniArea = progress.toFloat()
+        App.ocrEngine.miniArea = progress.toFloat()
     }
 
     private fun updateUnClipRatio(progress: Int) {
         val scale = progress.toFloat() / 10.toFloat()
         unClipRatioTv.text = "${getString(R.string.box_un_clip_ratio)}:$scale"
-        ocrEngine.unClipRatio = scale
+        App.ocrEngine.unClipRatio = scale
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -186,9 +192,9 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
             val boxImg: Bitmap = Bitmap.createBitmap(
                 img.width, img.height, Bitmap.Config.ARGB_8888
             )
-            Log.i(TAG, "selectedImg=${img.height},${img.width} ${img.config}")
+            Logger.i("selectedImg=${img.height},${img.width} ${img.config}")
             val start = System.currentTimeMillis()
-            val ocrResult = ocrEngine.detect(img, boxImg, reSize)
+            val ocrResult = App.ocrEngine.detect(img, boxImg, reSize)
             val end = System.currentTimeMillis()
             val time = "time=${end - start}ms"
             ocrResult
@@ -203,13 +209,12 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
                 val options =
                     RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
                 Glide.with(this).load(t1.boxImg).apply(options).into(imageView)
-                Log.i(TAG, "$t1")
+                Logger.i( "$t1")
             }
     }
 
     companion object {
         const val REQUEST_SELECT_IMAGE = 666
-        const val TAG = "OcrLite"
     }
 
 

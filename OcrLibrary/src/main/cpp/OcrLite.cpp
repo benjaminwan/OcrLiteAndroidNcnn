@@ -236,15 +236,15 @@ TextLine OcrLite::getTextLine(cv::Mat &src) {
 
 OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                           float boxScoreThresh, float boxThresh, float minArea,
-                          float unClipRatio) {
+                          float unClipRatio, bool doAngle) {
 
     cv::Mat textBoxPaddingImg = src.clone();
     int thickness = getThickness(src);
 
     Logger("=====Start detect=====");
     Logger("ScaleParam(sw:%d,sh:%d,dw:%d,dH%d,%f,%f)", scale.srcWidth, scale.srcHeight,
-         scale.dstWidth, scale.dstHeight,
-         scale.scaleWidth, scale.scaleHeight);
+           scale.dstWidth, scale.dstHeight,
+           scale.scaleWidth, scale.scaleHeight);
 
     double startTime = getCurrentTime();
     std::vector<TextBox> textBoxes = getTextBoxes(src, scale, boxScoreThresh, boxThresh,
@@ -256,7 +256,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
     Logger("dbNetTime(%fms)\n", dbNetTime);
 
     std::vector<TextBlock> textBlocks;
-    std::string strRes;
+
     for (int i = 0; i < textBoxes.size(); ++i) {
         Logger("-----TextBox[%d] score(%f)-----\n", i, textBoxes[i].score);
         double startTextBox = getCurrentTime();
@@ -277,32 +277,28 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         drawTextBox(textBoxPaddingImg, textBoxes[i].boxPoint, thickness);
 
         Logger("TextBoxPos([x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d])\n",
-             textBoxes[i].boxPoint[0].x, textBoxes[i].boxPoint[0].y,
-             textBoxes[i].boxPoint[1].x, textBoxes[i].boxPoint[1].y,
-             textBoxes[i].boxPoint[2].x, textBoxes[i].boxPoint[2].y,
-             textBoxes[i].boxPoint[3].x, textBoxes[i].boxPoint[3].y);
+               textBoxes[i].boxPoint[0].x, textBoxes[i].boxPoint[0].y,
+               textBoxes[i].boxPoint[1].x, textBoxes[i].boxPoint[1].y,
+               textBoxes[i].boxPoint[2].x, textBoxes[i].boxPoint[2].y,
+               textBoxes[i].boxPoint[3].x, textBoxes[i].boxPoint[3].y);
 
-        //Rotate Img
-        if (partImg.rows > 1.5 * partImg.cols) {
-            partImg = matRotateClockWise90(partImg);
+        Angle angle(-1, 0.f);
+        if (doAngle) {
+            //getAngle
+            double startAngle = getCurrentTime();
+            auto angleImg = adjustAngleImg(partImg, angleDstWidth, angleDstHeight);
+            angle = getAngle(angleImg);
+            double endAngle = getCurrentTime();
+            angle.time = endAngle - startAngle;
+
+            //Log Angle
+            Logger("angle(index=%d, score=%f time=%fms) \n", angle.index, angle.score, angle.time);
+
+            //Rotate Img
+            if (angle.index == 0) {
+                partImg = matRotateClockWise180(partImg);
+            }
         }
-
-        //getAngle
-        double startAngle = getCurrentTime();
-        auto angleImg = adjustAngleImg(partImg, angleDstWidth, angleDstHeight);
-        Angle angle = getAngle(angleImg);
-        double endAngle = getCurrentTime();
-        angle.time = endAngle - startAngle;
-
-        //Log Angle
-        Logger("angle(index=%d, score=%f)\n", angle.index, angle.score);
-        Logger("angleTime(%fms)\n", angle.time);
-
-        //Rotate Img
-        if (angle.index == 0) {
-            partImg = matRotateClockWise180(partImg);
-        }
-
         //getTextLine
         double startCrnnTime = getCurrentTime();
         TextLine textLine = getTextLine(partImg);
@@ -324,9 +320,6 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         double timeTextBox = endTextBox - startTextBox;
         Logger("TextBox[%i]Time(%fms)\n", i, timeTextBox);
 
-        strRes.append(textLine.text);
-        strRes.append("\n");
-
         TextBlock textBlock(textBoxes[i].boxPoint, textBoxes[i].score, angle.index, angle.score,
                             angle.time, textLine.text, textLine.charScores, textLine.time,
                             timeTextBox);
@@ -343,6 +336,12 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
         textBoxPaddingImg(originRect).copyTo(textBoxImg);
     } else {
         textBoxImg = textBoxPaddingImg;
+    }
+
+    std::string strRes;
+    for (int i = 0; i < textBlocks.size(); ++i) {
+        strRes.append(textBlocks[i].text);
+        strRes.append("\n");
     }
 
     return OcrResult(textBlocks, dbNetTime, textBoxImg, fullTime, strRes);

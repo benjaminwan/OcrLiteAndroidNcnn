@@ -20,19 +20,20 @@ class OcrEngine(context: Context) {
     var boxThresh: Float = 0.3f
     var miniArea: Float = 3f
     var unClipRatio: Float = 2.0f
+    var doAngle: Boolean = false
 
     fun detect(input: Bitmap, output: Bitmap, reSize: Int) =
         detect(
             input, output, padding, reSize,
             boxScoreThresh, boxThresh, miniArea,
-            unClipRatio
+            unClipRatio, doAngle
         )
 
     external fun init(assetManager: AssetManager, numThread: Int): Boolean
     external fun detect(
         input: Bitmap, output: Bitmap, padding: Int, reSize: Int,
         boxScoreThresh: Float, boxThresh: Float, miniArea: Float,
-        unClipRatio: Float
+        unClipRatio: Float, doAngle: Boolean
     ): OcrResult
 
 }

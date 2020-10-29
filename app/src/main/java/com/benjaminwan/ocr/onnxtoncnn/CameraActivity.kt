@@ -14,12 +14,14 @@ import com.afollestad.assent.Permission
 import com.afollestad.assent.askForPermissions
 import com.afollestad.assent.isAllGranted
 import com.afollestad.assent.rationale.createDialogRationale
+import com.benjaminwan.ocr.onnxtoncnn.app.App
 import com.benjaminwan.ocr.onnxtoncnn.dialog.DebugDialog
 import com.benjaminwan.ocr.onnxtoncnn.dialog.TextResultDialog
 import com.benjaminwan.ocr.onnxtoncnn.utils.showToast
 import com.benjaminwan.ocrlibrary.OcrEngine
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.bumptech.glide.Glide
+import com.orhanobut.logger.Logger
 import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -45,7 +47,6 @@ import kotlin.math.max
 
 class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private lateinit var ocrEngine: OcrEngine
     private var ocrResult: OcrResult? = null
 
     private var preview: Preview? = null
@@ -56,16 +57,16 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
-        ocrEngine = OcrEngine(applicationContext)
+        App.ocrEngine.doAngle = false//摄像头一般不需要考虑倒过来的情况
         clearBtn.setOnClickListener(this)
         detectBtn.setOnClickListener(this)
         resultBtn.setOnClickListener(this)
         debugBtn.setOnClickListener(this)
-        updatePadding(ocrEngine.padding)
-        updateBoxScoreThresh((ocrEngine.boxScoreThresh * 100).toInt())
-        updateBoxThresh((ocrEngine.boxThresh * 100).toInt())
-        updateMinArea(ocrEngine.miniArea.toInt())
-        updateUnClipRatio((ocrEngine.unClipRatio * 10).toInt())
+        updatePadding(App.ocrEngine.padding)
+        updateBoxScoreThresh((App.ocrEngine.boxScoreThresh * 100).toInt())
+        updateBoxThresh((App.ocrEngine.boxThresh * 100).toInt())
+        updateMinArea(App.ocrEngine.miniArea.toInt())
+        updateUnClipRatio((App.ocrEngine.unClipRatio * 10).toInt())
         paddingSeekBar.setOnSeekBarChangeListener(this)
         boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
         boxThreshSeekBar.setOnSeekBarChangeListener(this)
@@ -177,36 +178,36 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
         val scale = progress.toFloat() / 100.toFloat()
         val maxSize = max(width, height)
         val reSize = (scale * maxSize).toInt()
-        Log.i(TAG, "======$width,$height,$scale,$maxSize,$reSize")
+        Logger.i("======$width,$height,$scale,$maxSize,$reSize")
         scaleTv.text = "Size:$reSize(${scale * 100}%)"
     }
 
     private fun updatePadding(progress: Int) {
         paddingTv.text = "Padding:$progress"
-        ocrEngine.padding = progress
+        App.ocrEngine.padding = progress
     }
 
     private fun updateBoxScoreThresh(progress: Int) {
         val thresh = progress.toFloat() / 100.toFloat()
         boxScoreThreshTv.text = "${getString(R.string.box_score_thresh)}:$thresh"
-        ocrEngine.boxScoreThresh = thresh
+        App.ocrEngine.boxScoreThresh = thresh
     }
 
     private fun updateBoxThresh(progress: Int) {
         val thresh = progress.toFloat() / 100.toFloat()
         boxThreshTv.text = "BoxThresh:$thresh"
-        ocrEngine.boxThresh = thresh
+        App.ocrEngine.boxThresh = thresh
     }
 
     private fun updateMinArea(progress: Int) {
         minAreaTv.text = "${getString(R.string.min_area)}:$progress"
-        ocrEngine.miniArea = progress.toFloat()
+        App.ocrEngine.miniArea = progress.toFloat()
     }
 
     private fun updateUnClipRatio(progress: Int) {
         val scale = progress.toFloat() / 10.toFloat()
         unClipRatioTv.text = "${getString(R.string.box_un_clip_ratio)}:$scale"
-        ocrEngine.unClipRatio = scale
+        App.ocrEngine.unClipRatio = scale
     }
 
     private fun showLoading() {
@@ -230,8 +231,8 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
             val boxImg: Bitmap = Bitmap.createBitmap(
                 src.width, src.height, Bitmap.Config.ARGB_8888
             )
-            Log.i(TAG, "selectedImg=${src.height},${src.width} ${src.config}")
-            ocrEngine.detect(src, boxImg, reSize)
+            Logger.i("selectedImg=${src.height},${src.width} ${src.config}")
+            App.ocrEngine.detect(src, boxImg, reSize)
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }
@@ -280,7 +281,6 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
 
     companion object {
         const val REQUEST_SELECT_IMAGE = 666
-        const val TAG = "OcrLite"
     }
 
 
