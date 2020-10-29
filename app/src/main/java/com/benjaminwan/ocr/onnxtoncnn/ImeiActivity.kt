@@ -57,6 +57,7 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.ocrEngine.doAngle = false//摄像头拍摄一般都是正的，不需要判断方向
         setContentView(R.layout.activity_imei)
         viewFinder = findViewById(R.id.viewFinder)
         initViews()
