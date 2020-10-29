@@ -12,7 +12,7 @@
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/mStartBtn"
+        app:layout_constraintBottom_toTopOf="@+id/startBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:scaleType="fillCenter" />
 
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/mStartBtn"
+        android:id="@+id/startBtn"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="2dp"
@@ -47,13 +47,13 @@
         android:textColor="@android:color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/mResultText"
-        app:layout_constraintEnd_toStartOf="@+id/mStopBtn"
+        app:layout_constraintEnd_toStartOf="@+id/stopBtn"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewFinder" />
 
     <Button
-        android:id="@+id/mStopBtn"
+        android:id="@+id/stopBtn"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="2dp"
@@ -64,11 +64,11 @@
         android:text="停止识别"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/mStartBtn"
+        app:layout_constraintBaseline_toBaselineOf="@+id/startBtn"
         app:layout_constraintBottom_toTopOf="@+id/mResultText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/mStartBtn"
+        app:layout_constraintStart_toEndOf="@+id/startBtn"
         app:layout_constraintTop_toBottomOf="@+id/viewFinder" />
 
     <TextView
@@ -82,12 +82,12 @@
         android:text="识别结果: "
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/mResultEdit"
+        app:layout_constraintEnd_toStartOf="@+id/resultEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mStartBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/startBtn" />
 
     <EditText
-        android:id="@+id/mResultEdit"
+        android:id="@+id/resultEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
@@ -103,6 +103,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mResultText"
-        app:layout_constraintTop_toBottomOf="@+id/mStartBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/startBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -99,7 +99,7 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setResult() {
-        val text = mResultEdit.text.toString().trim()
+        val text = resultEdit.text.toString().trim()
         if (text.isNotEmpty()) {
             val result = Intent().apply {
                 putExtra("scanResult", text)
@@ -115,22 +115,22 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun showResult(result: OcrResult) {
         cameraLensView.cameraLensBitmap = result.boxImg
-        mResultEdit.setText(result.strRes)
-        mResultEdit.setSelection(result.strRes.length)
+        resultEdit.setText(result.strRes)
+        resultEdit.setSelection(result.strRes.length)
     }
 
     private fun initViews() {
-        mStartBtn.setOnClickListener(this)
-        mStopBtn.setOnClickListener(this)
+        startBtn.setOnClickListener(this)
+        stopBtn.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         view ?: return
         when (view.id) {
-            R.id.mStartBtn -> {
+            R.id.startBtn -> {
                 detectLoop()
             }
-            R.id.mStopBtn -> {
+            R.id.stopBtn -> {
                 detectStart = false
             }
         }
@@ -144,14 +144,14 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setDetectState(isStart: Boolean) {
         detectStart = isStart
-        mStartBtn.isEnabled = !isStart
-        mStopBtn.isEnabled = isStart
-        mResultEdit.isEnabled = !isStart
+        startBtn.isEnabled = !isStart
+        stopBtn.isEnabled = isStart
+        resultEdit.isEnabled = !isStart
     }
 
     private fun detectLoop() {
         cameraLensView.cameraLensBitmap = null
-        mResultEdit.setText("")
+        resultEdit.setText("")
         setDetectState(true)
         Observable.fromCallable {
             var success: OcrResult? = null
