@@ -54,6 +54,12 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs '../common-aar', 'libs'
+    }
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     testImplementation 'junit:junit:4.12'
@@ -103,4 +109,6 @@ dependencies {
 
     //Logger
     implementation 'com.orhanobut:logger:2.2.0'
+
+    implementation(name: 'IdCardView-1.0', ext: 'aar')
 }
