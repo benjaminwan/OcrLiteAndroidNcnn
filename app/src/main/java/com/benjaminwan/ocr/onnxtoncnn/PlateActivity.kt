@@ -58,8 +58,9 @@ class PlateActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.ocrEngine.doAngle = false//摄像头拍摄一般都是正的，不需要判断方向
-        App.ocrEngine.boxScoreThresh = 0.4444f
-        App.ocrEngine.unClipRatio = 1.8f
+        App.ocrEngine.padding = 100
+        App.ocrEngine.boxScoreThresh = 0.2f
+        App.ocrEngine.unClipRatio = 2.0f
         setContentView(R.layout.activity_plate)
         viewFinder = findViewById(R.id.viewFinder)
         initViews()
@@ -141,7 +142,6 @@ class PlateActivity : AppCompatActivity(), View.OnClickListener {
     private fun detectOnce(bitmap: Bitmap): OcrResult {
         val maxSize = max(bitmap.height, bitmap.width)
         val boxImg = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        App.ocrEngine.padding = maxSize / 2
         return App.ocrEngine.detect(bitmap, boxImg, maxSize / 2)
     }
 
