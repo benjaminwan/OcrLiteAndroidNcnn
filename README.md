@@ -76,6 +76,10 @@ ChOcrLiteAndroidOnnxToNcnn/OcrLibrary/src/main/staticLibs
 
 ##### gitclone缓存加速
 ```
+下载安装cgit(推荐)
+cgit clone https://github.com/opencv/opencv.git
+
+或者
 git config --global url."https://gitclone.com/github.com".insteadOf https://github.com
 git clone https://github.com/opencv/opencv.git
 ```
