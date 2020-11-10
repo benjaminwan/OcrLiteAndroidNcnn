@@ -71,6 +71,7 @@ ChOcrLiteAndroidOnnxToNcnn/OcrLibrary/src/main/staticLibs
 请参考[OcrLiteOnnx项目](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/pc_projects/OcrLiteOnnx)
 
 #### 编译opencv3，裁剪不需要的模块，减小包体积
+也可以直接下载编译好的sdk包，在顶部的下载地址内找opencv-3.4.11-android-sdk-static.zip。
 因为只是用opencv做一些图像处理和变换，所以不需要它自带的推理模块，video模块等等，去掉这些模块后，最终的apk包体积能减少40MB
 同步opencv源码，如果github访问很慢，可以使用镜像站hub.fastgit.org或者通过https://gitclone.com/缓存加速
 
