@@ -5,17 +5,23 @@ add_library(ncnn STATIC IMPORTED)
 set_target_properties(ncnn PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../staticLibs/${ANDROID_ABI}/libncnn.a)
 
 ## opencv 库
-add_library(libopencv_java3 SHARED IMPORTED)
-set_target_properties(libopencv_java3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../sharedLibs/${ANDROID_ABI}/libopencv_java3.so)
+set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../../sdk/native/jni")
+find_package(OpenCV REQUIRED)
+if (OpenCV_FOUND)
+    message(STATUS "OpenCV_LIBS: ${OpenCV_LIBS}")
+    message(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
+else ()
+    message(FATAL_ERROR "opencv Not Found!")
+endif (OpenCV_FOUND)
 
 # openmp
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fopenmp")
 
-if(DEFINED ANDROID_NDK_MAJOR AND ${ANDROID_NDK_MAJOR} GREATER 20)
+if (DEFINED ANDROID_NDK_MAJOR AND ${ANDROID_NDK_MAJOR} GREATER 20)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-openmp")
-endif()
+endif ()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fomit-frame-pointer -fstrict-aliasing -ffast-math")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fomit-frame-pointer -fstrict-aliasing -ffast-math")
@@ -44,7 +50,7 @@ find_library(
 target_link_libraries(
         OcrLite
         ncnn
-        libopencv_java3
+        ${OpenCV_LIBS}
         android
         z
         ${log-lib}
