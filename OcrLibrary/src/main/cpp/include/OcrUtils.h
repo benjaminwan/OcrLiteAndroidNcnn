@@ -5,8 +5,6 @@
 #include "OcrStruct.h"
 #include <android/log.h>
 
-using namespace cv;
-using namespace std;
 
 #define TAG "OcrLite"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE,TAG,__VA_ARGS__)
@@ -17,36 +15,36 @@ using namespace std;
 
 double getCurrentTime();
 
-ScaleParam getScaleParam(Mat &src, const float scale);
+ScaleParam getScaleParam(cv::Mat &src, const float scale);
 
-ScaleParam getScaleParam(Mat &src, const int targetSize);
+ScaleParam getScaleParam(cv::Mat &src, const int targetSize);
 
-RotatedRect getPartRect(vector<Point> &box, float scaleWidth, float scaleHeight);
+cv::RotatedRect getPartRect(std::vector<cv::Point> &box, float scaleWidth, float scaleHeight);
 
-int getThickness(Mat &boxImg);
+int getThickness(cv::Mat &boxImg);
 
-void drawTextBox(Mat &boxImg, RotatedRect &rect, int thickness);
+void drawTextBox(cv::Mat &boxImg, cv::RotatedRect &rect, int thickness);
 
-void drawTextBox(Mat &boxImg, const vector<Point> &box, int thickness);
+void drawTextBox(cv::Mat &boxImg, const std::vector<cv::Point> &box, int thickness);
 
-Mat matRotateClockWise180(Mat src);
+cv::Mat matRotateClockWise180(cv::Mat src);
 
-Mat matRotateClockWise90(Mat src);
+cv::Mat matRotateClockWise90(cv::Mat src);
 
-Mat GetRotateCropImage(const Mat &src, vector<Point> box);
+cv::Mat GetRotateCropImage(const cv::Mat &src, std::vector<cv::Point> box);
 
-Mat adjustTargetImg(Mat &src, int dstWidth, int dstHeight);
+cv::Mat adjustTargetImg(cv::Mat &src, int dstWidth, int dstHeight);
 
-int getMiniBoxes(vector<Point> &inVec,
-                 vector<Point> &minBoxVec,
+int getMiniBoxes(std::vector<cv::Point> &inVec,
+                 std::vector<cv::Point> &minBoxVec,
                  float &minEdgeSize, float &allEdgeSize
 );
 
-float boxScoreFast(Mat &mapmat, vector<Point> &_box);
+float boxScoreFast(cv::Mat &mapmat, std::vector<cv::Point> &_box);
 
-void unClip(vector<Point> &minBoxVec, float allEdgeSize,
-            vector<Point> &outVec, float unClipRatio);
+void unClip(std::vector<cv::Point> &minBoxVec, float allEdgeSize,
+            std::vector<cv::Point> &outVec, float unClipRatio);
 
-vector<int> getAngleIndexes(vector<Angle> &angles);
+std::vector<int> getAngleIndexes(std::vector<Angle> &angles);
 
 #endif //__OCR_UTILS_H__

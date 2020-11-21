@@ -8,9 +8,6 @@
 #include "AngleNet.h"
 #include "CrnnNet.h"
 
-using namespace cv;
-using namespace std;
-
 class OcrLite {
 public:
     OcrLite(JNIEnv *jniEnv, jobject assetManager, int numOfThread);

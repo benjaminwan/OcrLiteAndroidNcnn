@@ -40,7 +40,7 @@ void OcrLite::Logger(const char *format, ...) {
     free(buffer);
 }
 
-void OcrLite::drawTextBoxes(Mat &boxImg, vector<TextBox> &textBoxes, int thickness) {
+void OcrLite::drawTextBoxes(cv::Mat &boxImg, std::vector<TextBox> &textBoxes, int thickness) {
     for (int i = 0; i < textBoxes.size(); ++i) {
         drawTextBox(boxImg, textBoxes[i].boxPoint, thickness);
         Logger("TextBoxPos[%d]([x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d], [x: %d, y: %d])",
@@ -52,20 +52,20 @@ void OcrLite::drawTextBoxes(Mat &boxImg, vector<TextBox> &textBoxes, int thickne
     }
 }
 
-vector<Mat> OcrLite::getPartImages(Mat &src, vector<TextBox> &textBoxes) {
-    vector<Mat> partImages;
+std::vector<cv::Mat> OcrLite::getPartImages(cv::Mat &src, std::vector<TextBox> &textBoxes) {
+    std::vector<cv::Mat> partImages;
     for (int i = 0; i < textBoxes.size(); ++i) {
-        Mat partImg = GetRotateCropImage(src, textBoxes[i].boxPoint);
+        cv::Mat partImg = GetRotateCropImage(src, textBoxes[i].boxPoint);
         partImages.emplace_back(partImg);
     }
     return partImages;
 }
 
-OcrResult OcrLite::detect(Mat &src, Rect &originRect, ScaleParam &scale,
+OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
                           float boxScoreThresh, float boxThresh, float minArea,
                           float unClipRatio, bool doAngle, bool mostAngle) {
 
-    Mat textBoxPaddingImg = src.clone();
+    cv::Mat textBoxPaddingImg = src.clone();
     int thickness = getThickness(src);
 
     Logger("=====Start detect=====");
@@ -75,7 +75,7 @@ OcrResult OcrLite::detect(Mat &src, Rect &originRect, ScaleParam &scale,
 
     Logger("---------- step: dbNet getTextBoxes ----------");
     double startTime = getCurrentTime();
-    vector<TextBox> textBoxes = dbNet.getTextBoxes(src, scale, boxScoreThresh,
+    std::vector<TextBox> textBoxes = dbNet.getTextBoxes(src, scale, boxScoreThresh,
                                                    boxThresh, minArea, unClipRatio);
     Logger("TextBoxesSize(%ld)", textBoxes.size());
     double endDbNetTime = getCurrentTime();
@@ -86,16 +86,16 @@ OcrResult OcrLite::detect(Mat &src, Rect &originRect, ScaleParam &scale,
     drawTextBoxes(textBoxPaddingImg, textBoxes, thickness);
 
     //---------- getPartImages ----------
-    vector<Mat> partImages = getPartImages(src, textBoxes);
+    std::vector<cv::Mat> partImages = getPartImages(src, textBoxes);
 
     Logger("---------- step: angleNet getAngles ----------");
-    vector<Angle> angles;
+    std::vector<Angle> angles;
     angles = angleNet.getAngles(partImages, doAngle, mostAngle);
 
     Logger("---------- step: crnnNet getTextLine ----------");
-    vector<TextLine> textLines = crnnNet.getTextLines(partImages);
+    std::vector<TextLine> textLines = crnnNet.getTextLines(partImages);
 
-    vector<TextBlock> textBlocks;
+    std::vector<TextBlock> textBlocks;
     for (int i = 0; i < textLines.size(); ++i) {
         TextBlock textBlock(textBoxes[i].boxPoint, textBoxes[i].score, angles[i].index,
                             angles[i].score,
@@ -111,14 +111,14 @@ OcrResult OcrLite::detect(Mat &src, Rect &originRect, ScaleParam &scale,
     Logger("FullDetectTime(%fms)", fullTime);
 
     //cropped to original size
-    Mat textBoxImg;
+    cv::Mat textBoxImg;
     if (originRect.x > 0 && originRect.y > 0) {
         textBoxPaddingImg(originRect).copyTo(textBoxImg);
     } else {
         textBoxImg = textBoxPaddingImg;
     }
 
-    string strRes;
+    std::string strRes;
     for (int i = 0; i < textBlocks.size(); ++i) {
         strRes.append(textBlocks[i].text);
         strRes.append("\n");

@@ -46,8 +46,8 @@ bool CrnnNet::initModel(AAssetManager *mgr) {
 
     char *buffer = readKeysFromAssets(mgr);
     if (buffer != NULL) {
-        istringstream inStr(buffer);
-        string line;
+        std::istringstream inStr(buffer);
+        std::string line;
         int size = 0;
         while (getline(inStr, line)) {
             keys.emplace_back(line);
@@ -64,16 +64,16 @@ bool CrnnNet::initModel(AAssetManager *mgr) {
 }
 
 TextLine CrnnNet::scoreToTextLine(const float *srcData, int h, int w) {
-    string strRes;
+    std::string strRes;
     int lastIndex = 0;
     int keySize = keys.size();
-    vector<float> scores;
+    std::vector<float> scores;
     for (int i = 0; i < h; i++) {
         int maxIndex = 0;
         float maxValue = -1000.f;
 
         //do softmax
-        vector<float> exps(w);
+        std::vector<float> exps(w);
         for (int j = 0; j < w; j++) {
             float expSingle = exp(srcData[i * w + j]);
             exps.at(j) = expSingle;
@@ -102,12 +102,12 @@ TextLine CrnnNet::scoreToTextLine(const float *srcData, int h, int w) {
     return TextLine(strRes, scores);
 }
 
-TextLine CrnnNet::getTextLine(Mat &src) {
+TextLine CrnnNet::getTextLine(cv::Mat &src) {
     float scale = (float) dstHeight / (float) src.rows;
     int dstWidth = int((float) src.cols * scale);
 
-    Mat srcResize;
-    resize(src, srcResize, Size(dstWidth, dstHeight));
+    cv::Mat srcResize;
+    resize(src, srcResize, cv::Size(dstWidth, dstHeight));
 
     ncnn::Mat input = ncnn::Mat::from_pixels(
             srcResize.data, ncnn::Mat::PIXEL_RGB,
@@ -140,8 +140,8 @@ TextLine CrnnNet::getTextLine(Mat &src) {
     return scoreToTextLine((float *) blob263.data, blob263.h, blob263.w);
 }
 
-vector<TextLine> CrnnNet::getTextLines(vector<Mat> &partImg) {
-    vector<TextLine> textLines;
+std::vector<TextLine> CrnnNet::getTextLines(std::vector<cv::Mat> &partImg) {
+    std::vector<TextLine> textLines;
     for (int i = 0; i < partImg.size(); ++i) {
         //getTextLine
         double startCrnnTime = getCurrentTime();
@@ -152,7 +152,7 @@ vector<TextLine> CrnnNet::getTextLines(vector<Mat> &partImg) {
         //Log textLine
         //Logger("textLine[%d](%s)", i, textLine.text.c_str());
         textLines.emplace_back(textLine);
-        ostringstream txtScores;
+        std::ostringstream txtScores;
         for (int s = 0; s < textLine.charScores.size(); ++s) {
             if (s == 0) txtScores << textLine.charScores[s];
             txtScores << " ," << textLine.charScores[s];

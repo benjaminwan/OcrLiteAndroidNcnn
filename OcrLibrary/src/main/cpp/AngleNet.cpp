@@ -33,7 +33,7 @@ Angle scoreToAngle(const float *srcData, int w) {
     return Angle(angleIndex, maxValue);
 }
 
-Angle AngleNet::getAngle(Mat &src) {
+Angle AngleNet::getAngle(cv::Mat &src) {
     ncnn::Mat input = ncnn::Mat::from_pixels(
             src.data, ncnn::Mat::PIXEL_RGB,
             src.cols, src.rows);
@@ -46,9 +46,9 @@ Angle AngleNet::getAngle(Mat &src) {
     return scoreToAngle((float *) out.data, out.w);
 }
 
-vector<Angle>
-AngleNet::getAngles(vector<Mat> &partImgs, bool doAngle, bool mostAngle) {
-    vector<Angle> angles;
+std::vector<Angle>
+AngleNet::getAngles(std::vector<cv::Mat> &partImgs, bool doAngle, bool mostAngle) {
+    std::vector<Angle> angles;
     if (doAngle) {
         for (int i = 0; i < partImgs.size(); ++i) {
             //getAngle
