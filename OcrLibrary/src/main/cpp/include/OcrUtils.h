@@ -5,13 +5,17 @@
 #include "OcrStruct.h"
 #include <android/log.h>
 
-
 #define TAG "OcrLite"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE,TAG,__VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG,__VA_ARGS__)
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,TAG,__VA_ARGS__)
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN,TAG,__VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,TAG,__VA_ARGS__)
+
+#define __ENABLE_CONSOLE__ true
+#define Logger(format, ...) {\
+  if(__ENABLE_CONSOLE__) LOGI(format,##__VA_ARGS__); \
+}
 
 double getCurrentTime();
 
@@ -26,6 +30,8 @@ int getThickness(cv::Mat &boxImg);
 void drawTextBox(cv::Mat &boxImg, cv::RotatedRect &rect, int thickness);
 
 void drawTextBox(cv::Mat &boxImg, const std::vector<cv::Point> &box, int thickness);
+
+void drawTextBoxes(cv::Mat &boxImg, std::vector<TextBox> &textBoxes, int thickness);
 
 cv::Mat matRotateClockWise180(cv::Mat src);
 
@@ -42,8 +48,8 @@ int getMiniBoxes(std::vector<cv::Point> &inVec,
 
 float boxScoreFast(cv::Mat &mapmat, std::vector<cv::Point> &_box);
 
-void unClip(std::vector<cv::Point> &minBoxVec, float allEdgeSize,
-            std::vector<cv::Point> &outVec, float unClipRatio);
+void unClip(std::vector<cv::Point> &minBoxVec, float allEdgeSize, std::vector<cv::Point> &outVec,
+            float unClipRatio);
 
 std::vector<int> getAngleIndexes(std::vector<Angle> &angles);
 

@@ -71,7 +71,6 @@ TextLine CrnnNet::scoreToTextLine(const float *srcData, int h, int w) {
     for (int i = 0; i < h; i++) {
         int maxIndex = 0;
         float maxValue = -1000.f;
-
         //do softmax
         std::vector<float> exps(w);
         for (int j = 0; j < w; j++) {
@@ -86,6 +85,7 @@ TextLine CrnnNet::scoreToTextLine(const float *srcData, int h, int w) {
                 maxIndex = j;
             }
         }
+
         //no softmax
         /*for (int j = 0; j < w; j++) {
             if (srcData[i * w + j] > maxValue) {
@@ -99,7 +99,7 @@ TextLine CrnnNet::scoreToTextLine(const float *srcData, int h, int w) {
         }
         lastIndex = maxIndex;
     }
-    return TextLine(strRes, scores);
+    return {strRes, scores};
 }
 
 TextLine CrnnNet::getTextLine(cv::Mat &src) {
@@ -141,8 +141,12 @@ TextLine CrnnNet::getTextLine(cv::Mat &src) {
 }
 
 std::vector<TextLine> CrnnNet::getTextLines(std::vector<cv::Mat> &partImg) {
-    std::vector<TextLine> textLines;
-    for (int i = 0; i < partImg.size(); ++i) {
+    int size = partImg.size();
+    std::vector<TextLine> textLines(size);
+#ifdef __OPENMP__
+#pragma omp parallel for num_threads(numThread)
+#endif
+    for (int i = 0; i < size; ++i) {
         //getTextLine
         double startCrnnTime = getCurrentTime();
         TextLine textLine = getTextLine(partImg[i]);
@@ -151,12 +155,16 @@ std::vector<TextLine> CrnnNet::getTextLines(std::vector<cv::Mat> &partImg) {
 
         //Log textLine
         //Logger("textLine[%d](%s)", i, textLine.text.c_str());
-        textLines.emplace_back(textLine);
-        std::ostringstream txtScores;
+        textLines[i] = textLine;
+
+        /*std::ostringstream txtScores;
         for (int s = 0; s < textLine.charScores.size(); ++s) {
-            if (s == 0) txtScores << textLine.charScores[s];
-            txtScores << " ," << textLine.charScores[s];
-        }
+            if (s == 0) {
+                txtScores << textLine.charScores[s];
+            } else {
+                txtScores << " ," << textLine.charScores[s];
+            }
+        }*/
         //Logger("textScores[%d]{%s}", i, string(txtScores.str()).c_str());
         //Logger("crnnTime[%d](%fms)", i, textLine.time);
     }

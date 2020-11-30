@@ -35,8 +35,8 @@ DbNet::getTextBoxes(cv::Mat &src, ScaleParam &s, float boxScoreThresh,
     ncnn::Mat out;
     extractor.extract("out1", out);
 
-    cv::Mat fMapMat(s.dstHeight, s.dstWidth, CV_32FC1);
-    memcpy(fMapMat.data, (float *) out.data, s.dstWidth * s.dstHeight * sizeof(float));
+    cv::Mat fMapMat(srcResize.rows, srcResize.cols, CV_32FC1);
+    memcpy(fMapMat.data, (float *) out.data, srcResize.rows * srcResize.cols * sizeof(float));
 
     std::vector<TextBox> rsBoxes;
     cv::Mat norfMapMat;
@@ -73,7 +73,7 @@ DbNet::getTextBoxes(cv::Mat &src, ScaleParam &s, float boxScoreThresh,
             minBox[j].y = (std::min)((std::max)(minBox[j].y, 0), s.srcHeight);
         }
 
-        rsBoxes.emplace_back(TextBox(minBox, score));
+        rsBoxes.emplace_back(TextBox{minBox, score});
     }
     reverse(rsBoxes.begin(), rsBoxes.end());
     return rsBoxes;

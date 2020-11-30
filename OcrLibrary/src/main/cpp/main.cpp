@@ -16,7 +16,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_init(JNIEnv *env, jobject thiz, jobjec
                                                jint numThread) {
 
     ocrLite = new OcrLite(env, assetManager, numThread);
-    ocrLite->initLogger(false);
+    //ocrLite->initLogger(false);
     return JNI_TRUE;
 }
 
@@ -37,9 +37,8 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobj
                                                  jfloat boxScoreThresh, jfloat boxThresh,
                                                  jfloat minArea, jfloat unClipRatio,
                                                  jboolean doAngle, jboolean mostAngle) {
-    ocrLite->Logger(
-            "padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),minArea(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
-            padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio, doAngle, mostAngle);
+    Logger("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),minArea(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
+           padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio, doAngle, mostAngle);
     cv::Mat imgRGBA, imgRGB, imgOut;
     bitmapToMat(env, input, imgRGBA);
     cv::cvtColor(imgRGBA, imgRGB, cv::COLOR_RGBA2RGB);

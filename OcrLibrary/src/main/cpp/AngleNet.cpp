@@ -30,7 +30,7 @@ Angle scoreToAngle(const float *srcData, int w) {
             maxValue = srcData[i];
         }
     }
-    return Angle(angleIndex, maxValue);
+    return {angleIndex, maxValue};
 }
 
 Angle AngleNet::getAngle(cv::Mat &src) {
@@ -48,31 +48,31 @@ Angle AngleNet::getAngle(cv::Mat &src) {
 
 std::vector<Angle>
 AngleNet::getAngles(std::vector<cv::Mat> &partImgs, bool doAngle, bool mostAngle) {
-    std::vector<Angle> angles;
+    int size = partImgs.size();
+    std::vector<Angle> angles(size);
     if (doAngle) {
-        for (int i = 0; i < partImgs.size(); ++i) {
-            //getAngle
+#ifdef __OPENMP__
+#pragma omp parallel for num_threads(numThread)
+#endif
+        for (int i = 0; i < size; ++i) {
             double startAngle = getCurrentTime();
             auto angleImg = adjustTargetImg(partImgs[i], dstWidth, dstHeight);
             Angle angle = getAngle(angleImg);
             double endAngle = getCurrentTime();
             angle.time = endAngle - startAngle;
-            //Log Angle
-            //Logger("angle[%d](index=%d, score=%f time=%fms)", i, angle.index, angle.score, angle.time);
-            angles.emplace_back(angle);
+
+            angles[i] = angle;
+
         }
     } else {
-        for (int i = 0; i < partImgs.size(); ++i) {
-            Angle angle(-1, 0.f);
-            //Log Angle
-            //Logger("angle[%d]Disabled(index=%d, score=%f time=%fms)", i, angle.index, angle.score, angle.time);
-            angles.emplace_back(angle);
+        for (int i = 0; i < size; ++i) {
+            angles.emplace_back(Angle{-1, 0.f});
         }
     }
     //Most Possible AngleIndex
     if (doAngle && mostAngle) {
         auto angleIndexes = getAngleIndexes(angles);
-        double sum = accumulate(angleIndexes.begin(), angleIndexes.end(), 0.0);
+        double sum = std::accumulate(angleIndexes.begin(), angleIndexes.end(), 0.0);
         double halfPercent = angles.size() / 2.0f;
         int mostAngleIndex;
         if (sum < halfPercent) {//all angle set to 0
@@ -85,12 +85,6 @@ AngleNet::getAngles(std::vector<cv::Mat> &partImgs, bool doAngle, bool mostAngle
             Angle angle = angles[i];
             angle.index = mostAngleIndex;
             angles.at(i) = angle;
-        }
-    }
-    //Rotate partImgs
-    for (int i = 0; i < partImgs.size(); ++i) {
-        if (angles[i].index == 0) {
-            partImgs.at(i) = matRotateClockWise180(partImgs[i]);
         }
     }
 
