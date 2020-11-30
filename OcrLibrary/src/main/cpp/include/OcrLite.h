@@ -26,9 +26,6 @@ private:
     AngleNet angleNet;
     CrnnNet crnnNet;
 
-    std::vector<cv::Mat> getPartImages(cv::Mat &src, std::vector<TextBox> &textBoxes);
-
-
 };
 
 

@@ -80,7 +80,7 @@ AngleNet::getAngles(std::vector<cv::Mat> &partImgs, bool doAngle, bool mostAngle
         } else {//all angle set to 1
             mostAngleIndex = 1;
         }
-        //Logger("Set All Angle to mostAngleIndex(%d)", mostAngleIndex);
+        Logger("Set All Angle to mostAngleIndex(%d)", mostAngleIndex);
         for (int i = 0; i < angles.size(); ++i) {
             Angle angle = angles[i];
             angle.index = mostAngleIndex;

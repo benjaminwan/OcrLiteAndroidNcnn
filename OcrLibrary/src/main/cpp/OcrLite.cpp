@@ -40,7 +40,7 @@ void OcrLite::Logger(const char *format, ...) {
     free(buffer);
 }*/
 
-std::vector<cv::Mat> OcrLite::getPartImages(cv::Mat &src, std::vector<TextBox> &textBoxes) {
+std::vector<cv::Mat> getPartImages(cv::Mat &src, std::vector<TextBox> &textBoxes) {
     std::vector<cv::Mat> partImages;
     for (int i = 0; i < textBoxes.size(); ++i) {
         cv::Mat partImg = GetRotateCropImage(src, textBoxes[i].boxPoint);
