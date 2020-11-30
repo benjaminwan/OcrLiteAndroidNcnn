@@ -50,6 +50,16 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobj
                                           boxScoreThresh, boxThresh, minArea,
                                           unClipRatio, doAngle, mostAngle);
 
+    /*double startTest = getCurrentTime();
+    int loopCount = 100;
+    for (int i = 0; i < loopCount; ++i) {
+        ocrLite->detect(src, originRect, s,
+                        boxScoreThresh, boxThresh, minArea,
+                        unClipRatio, doAngle, mostAngle);
+    }
+    double endTest = getCurrentTime();
+    LOGI("average time=%f\n", (endTest - startTest) / loopCount);*/
+
     cv::cvtColor(ocrResult.boxImg, imgOut, cv::COLOR_RGB2RGBA);
     matToBitmap(env, imgOut, output);
 
