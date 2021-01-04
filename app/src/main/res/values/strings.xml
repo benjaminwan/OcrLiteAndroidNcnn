@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OcrLiteOnnxToNcnn</string>
+    <string name="app_name">OcrLiteNcnn</string>
 
     <string name="box_score_thresh">框置信度门限</string>
     <string name="min_area">最小区域门限</string>
