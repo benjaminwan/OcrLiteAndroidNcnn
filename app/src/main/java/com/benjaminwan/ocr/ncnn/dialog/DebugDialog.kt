@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn.dialog
+package com.benjaminwan.ocr.ncnn.dialog
 
 import android.os.Bundle
 import android.view.Gravity
@@ -6,20 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.EpoxyRecyclerView
-import com.airbnb.epoxy.EpoxyVisibilityTracker
-import com.benjaminwan.ocr.onnxtoncnn.R
-import com.benjaminwan.ocr.onnxtoncnn.models.DebugItemView
-import com.benjaminwan.ocr.onnxtoncnn.models.dbNetTimeItemView
-import com.benjaminwan.ocr.onnxtoncnn.models.debugItemView
-import com.benjaminwan.ocr.onnxtoncnn.utils.format
-import com.benjaminwan.ocr.onnxtoncnn.utils.hideSoftInput
-import com.benjaminwan.ocr.onnxtoncnn.utils.setMarginItemDecoration
+import com.benjaminwan.ocr.ncnn.R
+import com.benjaminwan.ocr.ncnn.models.dbNetTimeItemView
+import com.benjaminwan.ocr.ncnn.models.debugItemView
+import com.benjaminwan.ocr.ncnn.utils.format
+import com.benjaminwan.ocr.ncnn.utils.hideSoftInput
+import com.benjaminwan.ocr.ncnn.utils.setMarginItemDecoration
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.benjaminwan.ocrlibrary.TextBlock
 import kotlinx.android.synthetic.main.dialog_debug.*
-import kotlinx.android.synthetic.main.dialog_text_result.*
 import kotlinx.android.synthetic.main.dialog_text_result.negativeBtn
 import kotlinx.android.synthetic.main.dialog_text_result.positiveBtn
 import kotlinx.android.synthetic.main.dialog_text_result.titleTV

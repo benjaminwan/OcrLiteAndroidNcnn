@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn.models
+package com.benjaminwan.ocr.ncnn.models
 
 import android.os.Parcelable
 import com.benjaminwan.ocrlibrary.OcrOutput

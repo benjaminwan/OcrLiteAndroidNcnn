@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn
+package com.benjaminwan.ocr.ncnn
 
 import android.content.Intent
 import android.os.Bundle

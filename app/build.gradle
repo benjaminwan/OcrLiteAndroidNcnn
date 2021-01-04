@@ -17,7 +17,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.benjaminwan.ocr.onnxtoncnn"
+        applicationId "com.benjaminwan.ocr.ncnn"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 16

@@ -1,8 +1,8 @@
-package com.benjaminwan.ocr.onnxtoncnn.app
+package com.benjaminwan.ocr.ncnn.app
 
 import android.app.Application
 import android.util.Log
-import com.benjaminwan.ocr.onnxtoncnn.BuildConfig
+import com.benjaminwan.ocr.ncnn.BuildConfig
 import com.benjaminwan.ocrlibrary.OcrEngine
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.LogStrategy

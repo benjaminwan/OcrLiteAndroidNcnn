@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn.dialog
+package com.benjaminwan.ocr.ncnn.dialog
 
 import android.app.Dialog
 import android.os.Bundle

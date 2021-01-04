@@ -3,7 +3,9 @@
 #include "OcrLite.h"
 #include "OcrUtils.h"
 
-OcrLite::OcrLite(JNIEnv *env, jobject assetManager, int numOfThread) {
+OcrLite::OcrLite(){}
+
+void OcrLite::init(JNIEnv *env, jobject assetManager, int numOfThread) {
     AAssetManager *mgr = AAssetManager_fromJava(env, assetManager);
     if (mgr == NULL) {
         LOGE(" %s", "AAssetManager==NULL");

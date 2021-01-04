@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn.models
+package com.benjaminwan.ocr.ncnn.models
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import com.airbnb.epoxy.AfterPropsSet
 import com.airbnb.epoxy.ModelView
 import com.airbnb.epoxy.TextProp
-import com.benjaminwan.ocr.onnxtoncnn.R
+import com.benjaminwan.ocr.ncnn.R
 import kotlinx.android.synthetic.main.rv_dbnet_time_item.view.*
 
 // The ModelView annotation is used on Views to have models generated from those views.

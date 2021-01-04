@@ -37,4 +37,6 @@ class OcrEngine(context: Context) {
         unClipRatio: Float, doAngle: Boolean, mostAngle: Boolean
     ): OcrResult
 
+    external fun benchmark(input: Bitmap, loop: Int): Double
+
 }

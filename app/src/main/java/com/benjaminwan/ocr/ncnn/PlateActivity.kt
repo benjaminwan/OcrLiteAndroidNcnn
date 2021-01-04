@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn
+package com.benjaminwan.ocr.ncnn
 
 import android.app.Service
 import android.content.Intent
@@ -16,10 +16,10 @@ import com.afollestad.assent.Permission
 import com.afollestad.assent.askForPermissions
 import com.afollestad.assent.isAllGranted
 import com.afollestad.assent.rationale.createDialogRationale
-import com.benjaminwan.ocr.onnxtoncnn.app.App
-import com.benjaminwan.ocr.onnxtoncnn.utils.getMatchImeiStr
-import com.benjaminwan.ocr.onnxtoncnn.utils.replaceBlank
-import com.benjaminwan.ocr.onnxtoncnn.utils.showToast
+import com.benjaminwan.ocr.ncnn.app.App
+import com.benjaminwan.ocr.ncnn.utils.getMatchPlateStr
+import com.benjaminwan.ocr.ncnn.utils.showToast
+import com.benjaminwan.ocr.ncnn.utils.trimBlankAndSymbols
 import com.benjaminwan.ocrlibrary.OcrFailed
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.benjaminwan.ocrlibrary.OcrStop
@@ -28,10 +28,10 @@ import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_imei.*
+import kotlinx.android.synthetic.main.activity_plate.*
 import kotlin.math.max
 
-class ImeiActivity : AppCompatActivity(), View.OnClickListener {
+class PlateActivity : AppCompatActivity(), View.OnClickListener {
 
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
@@ -58,7 +58,10 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.ocrEngine.doAngle = false//摄像头拍摄一般都是正的，不需要判断方向
-        setContentView(R.layout.activity_imei)
+        App.ocrEngine.padding = 100
+        App.ocrEngine.boxScoreThresh = 0.2f
+        App.ocrEngine.unClipRatio = 2.0f
+        setContentView(R.layout.activity_plate)
         viewFinder = findViewById(R.id.viewFinder)
         initViews()
     }
@@ -139,7 +142,7 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
     private fun detectOnce(bitmap: Bitmap): OcrResult {
         val maxSize = max(bitmap.height, bitmap.width)
         val boxImg = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        return App.ocrEngine.detect(bitmap, boxImg, maxSize)
+        return App.ocrEngine.detect(bitmap, boxImg, maxSize / 2)
     }
 
     private fun setDetectState(isStart: Boolean) {
@@ -161,8 +164,9 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
                 val bitmap =
                     cameraLensView.cropCameraLensRectBitmap(camPic, false)
                 val once = detectOnce(bitmap)
-                Logger.i(once.strRes)
-                val matchId = getMatchImeiStr(once.strRes.replaceBlank().toUpperCase())
+                val text = once.strRes.trimBlankAndSymbols().toUpperCase()
+                Logger.i(text)
+                val matchId = getMatchPlateStr(text)
                 if (matchId != null) {
                     success = once.copy(strRes = matchId)
                 }

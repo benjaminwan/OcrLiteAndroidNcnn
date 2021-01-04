@@ -1,13 +1,13 @@
-package com.benjaminwan.ocr.onnxtoncnn.dialog
+package com.benjaminwan.ocr.ncnn.dialog
 
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.benjaminwan.ocr.onnxtoncnn.R
-import com.benjaminwan.ocr.onnxtoncnn.utils.hideSoftInput
-import com.benjaminwan.ocr.onnxtoncnn.utils.toClipboard
+import com.benjaminwan.ocr.ncnn.R
+import com.benjaminwan.ocr.ncnn.utils.hideSoftInput
+import com.benjaminwan.ocr.ncnn.utils.toClipboard
 import kotlinx.android.synthetic.main.dialog_text_result.*
 
 class TextResultDialog : BaseDialog(), View.OnClickListener {

@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn.utils
+package com.benjaminwan.ocr.ncnn.utils
 
 import android.content.ClipData
 import android.content.ClipboardManager

@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn
+package com.benjaminwan.ocr.ncnn
 
 import android.app.Service
 import android.content.Intent
@@ -17,9 +17,11 @@ import com.afollestad.assent.Permission
 import com.afollestad.assent.askForPermissions
 import com.afollestad.assent.isAllGranted
 import com.afollestad.assent.rationale.createDialogRationale
-import com.benjaminwan.ocr.onnxtoncnn.app.App
-import com.benjaminwan.ocr.onnxtoncnn.utils.*
-import com.benjaminwan.ocr.onnxtoncnn.models.IdCardFront
+import com.benjaminwan.ocr.ncnn.app.App
+import com.benjaminwan.ocr.ncnn.models.IdCardFront
+import com.benjaminwan.ocr.ncnn.utils.getMatchIdCardNumberStr
+import com.benjaminwan.ocr.ncnn.utils.showToast
+import com.benjaminwan.ocr.ncnn.utils.trimBlankAndSymbols
 import com.benjaminwan.ocrlibrary.OcrFailed
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.benjaminwan.ocrlibrary.OcrStop

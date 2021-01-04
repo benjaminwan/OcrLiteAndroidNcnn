@@ -10,7 +10,9 @@
 
 class OcrLite {
 public:
-    OcrLite(JNIEnv *jniEnv, jobject assetManager, int numOfThread);
+    OcrLite();
+
+    void init(JNIEnv *jniEnv, jobject assetManager, int numOfThread);
 
     //void initLogger(bool isDebug);
 

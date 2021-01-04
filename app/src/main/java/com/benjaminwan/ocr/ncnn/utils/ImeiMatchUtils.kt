@@ -1,4 +1,4 @@
-package com.benjaminwan.ocr.onnxtoncnn.utils
+package com.benjaminwan.ocr.ncnn.utils
 
 import com.orhanobut.logger.Logger
 import java.util.regex.Matcher
