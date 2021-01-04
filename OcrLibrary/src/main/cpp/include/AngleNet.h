@@ -2,7 +2,7 @@
 #define __OCR_ANGLENET_H__
 
 #include "OcrStruct.h"
-#include "ncnn/net.h"
+#include <net.h>
 #include <opencv/cv.hpp>
 
 class AngleNet {

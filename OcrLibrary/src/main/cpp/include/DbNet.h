@@ -2,11 +2,13 @@
 #define __OCR_DBNET_H__
 
 #include "OcrStruct.h"
-#include "ncnn/net.h"
+#include <net.h>
 #include <opencv/cv.hpp>
 
 class DbNet {
 public:
+    DbNet();
+
     ~DbNet();
 
     void setNumThread(int numOfThread);

@@ -1,6 +1,12 @@
 #include "DbNet.h"
 #include "OcrUtils.h"
 
+DbNet::DbNet() {
+#ifdef __VULKAN__
+    net.opt.use_vulkan_compute = true;
+#endif
+}
+
 DbNet::~DbNet() {
     net.clear();
 }

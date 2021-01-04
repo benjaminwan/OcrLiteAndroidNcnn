@@ -2,7 +2,7 @@
 #define __OCR_LITE_H__
 
 #include "opencv2/core.hpp"
-#include "ncnn/net.h"
+#include <net.h>
 #include "OcrStruct.h"
 #include "DbNet.h"
 #include "AngleNet.h"

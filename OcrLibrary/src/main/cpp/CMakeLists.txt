@@ -1,22 +1,11 @@
+project(OcrLite)
+
 cmake_minimum_required(VERSION 3.4.1)
 
 option(OCR_LITE_OPENMP "OcrLite Enable OpenMP" ON)
-
-# import ncnn library
-set(NCNN_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/../staticLibs/${ANDROID_ABI}/include")
-include_directories(${NCNN_INCLUDE_DIRS})
+option(OCR_LITE_VULKAN "OcrLite Enable Vulkan" ON)
 set(ncnn_DIR "${CMAKE_SOURCE_DIR}/../staticLibs/${ANDROID_ABI}/lib/cmake/ncnn")
-set(NCNN_LIBS ncnn)
 find_package(ncnn REQUIRED)
-if (ncnn_FOUND)
-    message(STATUS "NCNN_LIBS: ${NCNN_LIBS}")
-    message(STATUS "NCNN_INCLUDE_DIRS: ${NCNN_INCLUDE_DIRS}")
-    message(STATUS "Vulkan_LIBRARY: ${Vulkan_LIBRARY}")
-    message(STATUS "Vulkan_INCLUDE_DIR: ${Vulkan_INCLUDE_DIR}")
-    include_directories(${Vulkan_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "ncnn Not Found!")
-endif (ncnn_FOUND)
 
 ## opencv 库
 set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../../sdk/native/jni")
@@ -27,24 +16,6 @@ if (OpenCV_FOUND)
 else ()
     message(FATAL_ERROR "opencv Not Found!")
 endif (OpenCV_FOUND)
-
-# openmp
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fopenmp")
-
-if (DEFINED ANDROID_NDK_MAJOR AND ${ANDROID_NDK_MAJOR} GREATER 20)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-openmp")
-endif ()
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fomit-frame-pointer -fstrict-aliasing -ffast-math")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fomit-frame-pointer -fstrict-aliasing -ffast-math")
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-
-# disable rtti and exceptions
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 include_directories(include)
 file(GLOB OCR_SRC src/*.cpp)
@@ -67,10 +38,14 @@ find_library(
 
 target_link_libraries(
         OcrLite
-        ${NCNN_LIBS}
+        ncnn
         ${OpenCV_LIBS}
         android
         z
         ${log-lib}
         ${android-lib}
         jnigraphics)
+
+if (OCR_LITE_VULKAN)
+    target_compile_definitions(OcrLiteNcnn PRIVATE __VULKAN__)
+endif ()

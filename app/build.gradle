@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "com.benjaminwan.ocr.ncnn"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 16
         versionName "1.5.1.20201205"
