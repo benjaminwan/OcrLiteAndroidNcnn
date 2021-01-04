@@ -11,13 +11,13 @@ void OcrLite::init(JNIEnv *env, jobject assetManager, int numOfThread) {
         LOGE(" %s", "AAssetManager==NULL");
     }
 
-    dbNet.setNumOfThreads(numOfThread);
+    dbNet.setNumThread(numOfThread);
     bool retDbNet = dbNet.initModel(mgr);
 
-    angleNet.setNumOfThreads(numOfThread);
+    angleNet.setNumThread(numOfThread);
     bool retAngleNet = angleNet.initModel(mgr);
 
-    crnnNet.setNumOfThreads(numOfThread);
+    crnnNet.setNumThread(numOfThread);
     bool retCrnnNet = crnnNet.initModel(mgr);
 
     if (!retDbNet || !retAngleNet || !retCrnnNet) {

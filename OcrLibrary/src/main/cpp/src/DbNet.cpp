@@ -5,7 +5,7 @@ DbNet::~DbNet() {
     net.clear();
 }
 
-void DbNet::setNumOfThreads(int numOfThread) {
+void DbNet::setNumThread(int numOfThread) {
     numThread = numOfThread;
 }
 

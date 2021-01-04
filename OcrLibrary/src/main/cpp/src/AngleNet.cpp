@@ -6,7 +6,7 @@ AngleNet::~AngleNet() {
     net.clear();
 }
 
-void AngleNet::setNumOfThreads(int numOfThread) {
+void AngleNet::setNumThread(int numOfThread) {
     numThread = numOfThread;
 }
 

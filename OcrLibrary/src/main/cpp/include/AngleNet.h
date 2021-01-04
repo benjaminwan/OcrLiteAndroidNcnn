@@ -10,7 +10,7 @@ public:
 
     ~AngleNet();
 
-    void setNumOfThreads(int numOfThread);
+    void setNumThread(int numOfThread);
 
     bool initModel(AAssetManager *mgr);
 

@@ -6,7 +6,7 @@ CrnnNet::~CrnnNet() {
     net.clear();
 }
 
-void CrnnNet::setNumOfThreads(int numOfThread) {
+void CrnnNet::setNumThread(int numOfThread) {
     numThread = numOfThread;
 }
 
