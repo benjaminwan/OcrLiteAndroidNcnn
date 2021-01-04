@@ -4,6 +4,7 @@
 DbNet::DbNet() {
 #ifdef __VULKAN__
     net.opt.use_vulkan_compute = true;
+    LOGI("DbNet use vulkan compute");
 #endif
 }
 
