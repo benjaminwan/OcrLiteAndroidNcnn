@@ -1,5 +1,5 @@
 #include <OcrUtils.h>
-#include "include/OcrResultUtils.h"
+#include "OcrResultUtils.h"
 
 OcrResultUtils::OcrResultUtils(JNIEnv *env, OcrResult &ocrResult, jobject boxImg) {
     jniEnv = env;

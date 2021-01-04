@@ -1,4 +1,4 @@
-#include "include/CrnnNet.h"
+#include "CrnnNet.h"
 #include "OcrUtils.h"
 #include <numeric>
 

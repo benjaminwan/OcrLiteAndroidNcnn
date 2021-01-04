@@ -35,7 +35,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 include_directories(include)
-file(GLOB OCR_SRC *.cpp)
+file(GLOB OCR_SRC src/*.cpp)
 set(OCR_COMPILE_CODE ${OCR_SRC})
 
 add_library(OcrLite SHARED ${OCR_COMPILE_CODE})
