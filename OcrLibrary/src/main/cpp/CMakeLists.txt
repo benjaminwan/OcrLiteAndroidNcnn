@@ -3,8 +3,20 @@ cmake_minimum_required(VERSION 3.4.1)
 option(OCR_LITE_OPENMP "OcrLite Enable OpenMP" ON)
 
 # import ncnn library
-add_library(ncnn STATIC IMPORTED)
-set_target_properties(ncnn PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../staticLibs/${ANDROID_ABI}/libncnn.a)
+set(NCNN_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/../staticLibs/${ANDROID_ABI}/include")
+include_directories(${NCNN_INCLUDE_DIRS})
+set(ncnn_DIR "${CMAKE_SOURCE_DIR}/../staticLibs/${ANDROID_ABI}/lib/cmake/ncnn")
+set(NCNN_LIBS ncnn)
+find_package(ncnn REQUIRED)
+if (ncnn_FOUND)
+    message(STATUS "NCNN_LIBS: ${NCNN_LIBS}")
+    message(STATUS "NCNN_INCLUDE_DIRS: ${NCNN_INCLUDE_DIRS}")
+    message(STATUS "Vulkan_LIBRARY: ${Vulkan_LIBRARY}")
+    message(STATUS "Vulkan_INCLUDE_DIR: ${Vulkan_INCLUDE_DIR}")
+    include_directories(${Vulkan_INCLUDE_DIR})
+else ()
+    message(FATAL_ERROR "ncnn Not Found!")
+endif (ncnn_FOUND)
 
 ## opencv 库
 set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../../sdk/native/jni")
@@ -55,7 +67,7 @@ find_library(
 
 target_link_libraries(
         OcrLite
-        ncnn
+        ${NCNN_LIBS}
         ${OpenCV_LIBS}
         android
         z
