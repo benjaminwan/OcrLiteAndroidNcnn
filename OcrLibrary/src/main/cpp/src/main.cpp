@@ -62,7 +62,8 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobj
 }
 
 extern "C" JNIEXPORT jdouble JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, jobject input, jint loop) {
+Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, jobject input,
+                                                    jint loop) {
     int padding = 50;
     int reSize = 0;
     float boxScoreThresh = 0.6;
@@ -70,9 +71,9 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, j
     float minArea = 3.0;
     float unClipRatio = 2.0;
     bool doAngle = true;
-    bool mostAngle = false;
-    Logger("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),minArea(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
-           padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio, doAngle, mostAngle);
+    bool mostAngle = true;
+    LOGI("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),minArea(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
+         padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio, doAngle, mostAngle);
     cv::Mat imgRGBA, imgRGB, imgOut;
     bitmapToMat(env, input, imgRGBA);
     cv::cvtColor(imgRGBA, imgRGB, cv::COLOR_RGBA2RGB);
@@ -80,20 +81,27 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, j
     cv::Mat src = makePadding(imgRGB, padding);
     //按比例缩小图像，减少文字分割时间
     ScaleParam s = getScaleParam(src, src.cols);//例：按长或宽缩放 src.cols=不缩放，src.cols/2=长度缩小一半
-    OcrResult ocrResult = ocrLite->detect(src, originRect, s,
-                                          boxScoreThresh, boxThresh, minArea,
-                                          unClipRatio, doAngle, mostAngle);
 
-    double startTest = getCurrentTime();
+    LOGI("=====warmup=====");
+    OcrResult result = ocrLite->detect(src, originRect, s,
+                                       boxScoreThresh, boxThresh, minArea,
+                                       unClipRatio, doAngle, mostAngle);
+    LOGI("dbNetTime(%f) detectTime(%f)\n", result.dbNetTime, result.detectTime);
+    double dbTime = 0.0f;
+    double detectTime = 0.0f;
     int loopCount = loop;
     for (int i = 0; i < loopCount; ++i) {
         LOGI("=====loop:%d=====", i + 1);
-        ocrLite->detect(src, originRect, s,
-                        boxScoreThresh, boxThresh, minArea,
-                        unClipRatio, doAngle, mostAngle);
+        OcrResult ocrResult = ocrLite->detect(src, originRect, s,
+                                              boxScoreThresh, boxThresh, minArea,
+                                              unClipRatio, doAngle, mostAngle);
+        LOGI("dbNetTime(%f) detectTime(%f)\n", ocrResult.dbNetTime, ocrResult.detectTime);
+        dbTime += ocrResult.dbNetTime;
+        detectTime += ocrResult.detectTime;
     }
-    double endTest = getCurrentTime();
-    double averageTime = (endTest - startTest) / loopCount;
-    LOGI("loopCount=%d, average time=%fms", loopCount, averageTime);
+    LOGI("=====result=====\n");
+    double averageTime = detectTime / loopCount;
+    LOGI("average dbNetTime=%fms, average detectTime=%fms\n", dbTime / loopCount,
+         averageTime);
     return (jdouble) averageTime;
 }

@@ -98,7 +98,7 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
                     showToast("请先选择一张图片")
                     return
                 }
-                val loop = 50
+                val loop = 100
                 showToast("开始循环${loop}次的测试")
                 benchmark(img, loop)
             }
