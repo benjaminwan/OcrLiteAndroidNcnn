@@ -17,6 +17,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 2. Native层以C++编写。
 3. demo app以Kotlin-JVM编写。
 4. Android版与其它版本不同，包含了几个应用场景，包括相册识别、摄像头识别、手机IMEI号识别、摄像头身份证识别这几个功能页面。
+5. 可自己选择是否要支持vulkan(GPU加速)。
 
 ### 编译说明
 1. AndroidStudio 4.1或以上
@@ -57,10 +58,12 @@ OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-static
 一共有4个文件需要修改，否则会造成编译错误。**
 
 7. 当选择ncnn不带vulkan支持的版本时
-* app/build.gradle和OcrLibrary/build.gradle里的minSdkVersion可以改为21
+* app/build.gradle和OcrLibrary/build.gradle里的minSdkVersion可以改为21，编译出来的apk体积小10MB
+* minSdkVersion=21时，最终编译出来的apk大约21MB
 
 8. 当选择ncnn带vulkan支持的版本时
 * app/build.gradle和OcrLibrary/build.gradle里的minSdkVersion必须>=24
+* 因为sdk24(Android N/7.0)启用了新的打包和签名方式，再加上vulkan支持增加了不少体积，最终apk大约58MB
 * 可以通过修改OcrLibrary/src/main/cpp/CMakeLists.txt的```set(OCR_LITE_VULKAN OFF)```来关闭gpu计算
 
 ### 输入参数说明
