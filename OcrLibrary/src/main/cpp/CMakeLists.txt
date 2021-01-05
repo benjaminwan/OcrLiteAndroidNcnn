@@ -28,23 +28,10 @@ if (OCR_LITE_OPENMP)
     target_compile_definitions(OcrLite PRIVATE __OPENMP__)
 endif ()
 
-find_library( # Sets the name of the path variable.
-        log-lib
-        log)
-
-find_library(
-        android-lib
-        android
-)
-
 target_link_libraries(
         OcrLite
         ncnn
         ${OpenCV_LIBS}
-        android
-        z
-        ${log-lib}
-        ${android-lib}
         jnigraphics)
 
 if (OCR_LITE_VULKAN)
