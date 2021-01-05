@@ -17,7 +17,8 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 2. Native层以C++编写。
 3. demo app以Kotlin-JVM编写。
 4. Android版与其它版本不同，包含了几个应用场景，包括相册识别、摄像头识别、手机IMEI号识别、摄像头身份证识别这几个功能页面。
-5. 可自己选择是否要支持vulkan(GPU加速)。
+5. 自己编译的opencv 3.4.10，并精简了不需要的模块，减小apk体积。
+6. 可自己选择是否要支持vulkan(GPU加速)。
 
 ### 编译说明
 1. AndroidStudio 4.1或以上
