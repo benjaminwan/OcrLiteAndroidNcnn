@@ -28,7 +28,8 @@ bool DbNet::initModel(AAssetManager *mgr) {
 
 std::vector<TextBox>
 DbNet::getTextBoxes(cv::Mat &src, ScaleParam &s, float boxScoreThresh,
-                    float boxThresh, float minArea, float unClipRatio) {
+                    float boxThresh, float unClipRatio) {
+    float minArea = 3.0f;
     cv::Mat srcResize;
     resize(src, srcResize, cv::Size(s.dstWidth, s.dstHeight));
 

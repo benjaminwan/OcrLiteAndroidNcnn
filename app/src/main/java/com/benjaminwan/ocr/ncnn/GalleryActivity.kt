@@ -43,12 +43,10 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         updatePadding(App.ocrEngine.padding)
         updateBoxScoreThresh((App.ocrEngine.boxScoreThresh * 100).toInt())
         updateBoxThresh((App.ocrEngine.boxThresh * 100).toInt())
-        updateMinArea(App.ocrEngine.miniArea.toInt())
         updateUnClipRatio((App.ocrEngine.unClipRatio * 10).toInt())
         paddingSeekBar.setOnSeekBarChangeListener(this)
         boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
         boxThreshSeekBar.setOnSeekBarChangeListener(this)
-        minAreaSeekBar.setOnSeekBarChangeListener(this)
         scaleSeekBar.setOnSeekBarChangeListener(this)
         scaleUnClipRatioSeekBar.setOnSeekBarChangeListener(this)
         doAngleSw.setOnCheckedChangeListener { _, isChecked ->
@@ -122,9 +120,6 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
             R.id.boxThreshSeekBar -> {
                 updateBoxThresh(progress)
             }
-            R.id.minAreaSeekBar -> {
-                updateMinArea(progress)
-            }
             R.id.scaleUnClipRatioSeekBar -> {
                 updateUnClipRatio(progress)
             }
@@ -166,11 +161,6 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         val thresh = progress.toFloat() / 100.toFloat()
         boxThreshTv.text = "BoxThresh:$thresh"
         App.ocrEngine.boxThresh = thresh
-    }
-
-    private fun updateMinArea(progress: Int) {
-        minAreaTv.text = "${getString(R.string.min_area)}:$progress"
-        App.ocrEngine.miniArea = progress.toFloat()
     }
 
     private fun updateUnClipRatio(progress: Int) {

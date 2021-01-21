@@ -36,14 +36,11 @@ cv::Mat makePadding(cv::Mat &src, const int padding) {
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobject input,
-                                                 jobject output,
-                                                 jint padding, jint reSize,
-                                                 jfloat boxScoreThresh, jfloat boxThresh,
-                                                 jfloat minArea, jfloat unClipRatio,
-                                                 jboolean doAngle, jboolean mostAngle) {
-    Logger("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),minArea(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
-           padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio, doAngle, mostAngle);
+Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobject input, jobject output,
+                                                 jint padding, jint reSize, jfloat boxScoreThresh, jfloat boxThresh,
+                                                 jfloat unClipRatio, jboolean doAngle, jboolean mostAngle) {
+    Logger("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
+           padding, reSize, boxScoreThresh, boxThresh, unClipRatio, doAngle, mostAngle);
     cv::Mat imgRGBA, imgRGB, imgOut;
     bitmapToMat(env, input, imgRGBA);
     cv::cvtColor(imgRGBA, imgRGB, cv::COLOR_RGBA2RGB);
@@ -51,8 +48,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_detect(JNIEnv *env, jobject thiz, jobj
     cv::Mat src = makePadding(imgRGB, padding);
     //按比例缩小图像，减少文字分割时间
     ScaleParam s = getScaleParam(src, reSize);//例：按长或宽缩放 src.cols=不缩放，src.cols/2=长度缩小一半
-    OcrResult ocrResult = ocrLite->detect(src, originRect, s,
-                                          boxScoreThresh, boxThresh, minArea,
+    OcrResult ocrResult = ocrLite->detect(src, originRect, s, boxScoreThresh, boxThresh,
                                           unClipRatio, doAngle, mostAngle);
 
     cv::cvtColor(ocrResult.boxImg, imgOut, cv::COLOR_RGB2RGBA);
@@ -68,12 +64,11 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, j
     int reSize = 0;
     float boxScoreThresh = 0.6;
     float boxThresh = 0.3;
-    float minArea = 3.0;
     float unClipRatio = 2.0;
     bool doAngle = true;
     bool mostAngle = true;
-    LOGI("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),minArea(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
-         padding, reSize, boxScoreThresh, boxThresh, minArea, unClipRatio, doAngle, mostAngle);
+    LOGI("padding(%d),reSize(%d),boxScoreThresh(%f),boxThresh(%f),unClipRatio(%f),doAngle(%d),mostAngle(%d)",
+         padding, reSize, boxScoreThresh, boxThresh, unClipRatio, doAngle, mostAngle);
     cv::Mat imgRGBA, imgRGB, imgOut;
     bitmapToMat(env, input, imgRGBA);
     cv::cvtColor(imgRGBA, imgRGB, cv::COLOR_RGBA2RGB);
@@ -83,8 +78,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, j
     ScaleParam s = getScaleParam(src, src.cols);//例：按长或宽缩放 src.cols=不缩放，src.cols/2=长度缩小一半
 
     LOGI("=====warmup=====");
-    OcrResult result = ocrLite->detect(src, originRect, s,
-                                       boxScoreThresh, boxThresh, minArea,
+    OcrResult result = ocrLite->detect(src, originRect, s, boxScoreThresh, boxThresh,
                                        unClipRatio, doAngle, mostAngle);
     LOGI("dbNetTime(%f) detectTime(%f)\n", result.dbNetTime, result.detectTime);
     double dbTime = 0.0f;
@@ -92,8 +86,7 @@ Java_com_benjaminwan_ocrlibrary_OcrEngine_benchmark(JNIEnv *env, jobject thiz, j
     int loopCount = loop;
     for (int i = 0; i < loopCount; ++i) {
         LOGI("=====loop:%d=====", i + 1);
-        OcrResult ocrResult = ocrLite->detect(src, originRect, s,
-                                              boxScoreThresh, boxThresh, minArea,
+        OcrResult ocrResult = ocrLite->detect(src, originRect, s, boxScoreThresh, boxThresh,
                                               unClipRatio, doAngle, mostAngle);
         LOGI("dbNetTime(%f) detectTime(%f)\n", ocrResult.dbNetTime, ocrResult.detectTime);
         dbTime += ocrResult.dbNetTime;

@@ -3,7 +3,7 @@
 #include "OcrLite.h"
 #include "OcrUtils.h"
 
-OcrLite::OcrLite(){}
+OcrLite::OcrLite() {}
 
 void OcrLite::init(JNIEnv *env, jobject assetManager, int numOfThread) {
     AAssetManager *mgr = AAssetManager_fromJava(env, assetManager);
@@ -55,7 +55,7 @@ std::vector<cv::Mat> getPartImages(cv::Mat &src, std::vector<TextBox> &textBoxes
 }
 
 OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
-                          float boxScoreThresh, float boxThresh, float minArea,
+                          float boxScoreThresh, float boxThresh,
                           float unClipRatio, bool doAngle, bool mostAngle) {
 
     cv::Mat textBoxPaddingImg = src.clone();
@@ -68,8 +68,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
 
     Logger("---------- step: dbNet getTextBoxes ----------");
     double startTime = getCurrentTime();
-    std::vector<TextBox> textBoxes = dbNet.getTextBoxes(src, scale, boxScoreThresh,
-                                                        boxThresh, minArea, unClipRatio);
+    std::vector<TextBox> textBoxes = dbNet.getTextBoxes(src, scale, boxScoreThresh, boxThresh, unClipRatio);
     Logger("TextBoxesSize(%ld)", textBoxes.size());
     double endDbNetTime = getCurrentTime();
     double dbNetTime = endDbNetTime - startTime;
