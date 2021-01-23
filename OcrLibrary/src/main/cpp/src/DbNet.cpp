@@ -74,10 +74,10 @@ DbNet::getTextBoxes(cv::Mat &src, ScaleParam &s, float boxScoreThresh,
         //---use clipper end---
 
         for (int j = 0; j < minBox.size(); ++j) {
-            minBox[j].x = (minBox[j].x / s.scaleWidth);
+            minBox[j].x = (minBox[j].x / s.ratioWidth);
             minBox[j].x = (std::min)((std::max)(minBox[j].x, 0), s.srcWidth);
 
-            minBox[j].y = (minBox[j].y / s.scaleHeight);
+            minBox[j].y = (minBox[j].y / s.ratioHeight);
             minBox[j].y = (std::min)((std::max)(minBox[j].y, 0), s.srcHeight);
         }
 

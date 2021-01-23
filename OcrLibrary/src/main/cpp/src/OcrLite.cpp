@@ -64,7 +64,7 @@ OcrResult OcrLite::detect(cv::Mat &src, cv::Rect &originRect, ScaleParam &scale,
     Logger("=====Start detect=====");
     Logger("ScaleParam(sw:%d,sh:%d,dw:%d,dh:%d,%f,%f)", scale.srcWidth, scale.srcHeight,
            scale.dstWidth, scale.dstHeight,
-           scale.scaleWidth, scale.scaleHeight);
+           scale.ratioWidth, scale.ratioHeight);
 
     Logger("---------- step: dbNet getTextBoxes ----------");
     double startTime = getCurrentTime();
