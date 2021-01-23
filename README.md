@@ -68,7 +68,7 @@ OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-static
 * 可以通过修改OcrLibrary/src/main/cpp/CMakeLists.txt的```set(OCR_LITE_VULKAN OFF)```来关闭gpu计算
 
 ### 输入参数说明
-请参考[OcrLiteOnnx项目](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/pc_projects/OcrLiteOnnx)
+请参考[OcrLiteOnnx项目](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/cpp_projects/OcrLiteOnnx)
 
 ### 删除缓存，重新编译
 删除项目根目录下的如下文件夹
