@@ -33,6 +33,16 @@ android {
         }
     }
 
+    flavorDimensions 'ocr_library_types'
+    productFlavors {
+        cpu {
+            minSdkVersion 21
+        }
+        gpu {
+            minSdkVersion 24
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -49,7 +59,7 @@ android {
     applicationVariants.all {
         variant ->
             variant.outputs.all {
-                outputFileName = "${rootProject.name}-${defaultConfig.versionName}-${variant.buildType.name}.apk"
+                outputFileName = "${rootProject.name}-${defaultConfig.versionName}-${variant.flavorName}-${variant.buildType.name}.apk"
             }
     }
 }
