@@ -26,7 +26,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 6. 可自己选择是否要支持vulkan(GPU加速)。
 
 ### 编译说明
-1. AndroidStudio 4.1.2或以上
+1. AndroidStudio 4.2.1或以上
 2. NDK
 3. cmake 3.4.1或以上
 4. [模型下载](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/models_ncnn)
