@@ -20,8 +20,8 @@ android {
         applicationId "com.benjaminwan.ocr.ncnn"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 19
-        versionName "1.5.4.20210130"
+        versionCode 20
+        versionName "1.5.5.20210607"
         signingConfig signingConfigs.ocr
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
