@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -25,12 +27,12 @@ import com.benjaminwan.ocr.ncnn.utils.trimBlankAndSymbols
 import com.benjaminwan.ocrlibrary.OcrFailed
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.benjaminwan.ocrlibrary.OcrStop
+import com.mywork.idcardview.IdCardFrontView
 import com.orhanobut.logger.Logger
 import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_idcard_front.*
 import kotlin.math.max
 
 class IdCardFrontActivity : AppCompatActivity(), View.OnClickListener {
@@ -57,6 +59,49 @@ class IdCardFrontActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private lateinit var startBtn: Button
+    private lateinit var stopBtn: Button
+    private lateinit var clearNameBtn: ImageButton
+    private lateinit var clearGenderBtn: ImageButton
+    private lateinit var clearNationBtn: ImageButton
+    private lateinit var clearBirthBtn: ImageButton
+    private lateinit var clearAddressBtn: ImageButton
+    private lateinit var clearNumberBtn: ImageButton
+    private lateinit var nameEdit: EditText
+    private lateinit var genderEdit: EditText
+    private lateinit var nationEdit: EditText
+    private lateinit var birthDateEdit: EditText
+    private lateinit var addressEdit: EditText
+    private lateinit var numberEdit: EditText
+    private lateinit var idCardFrontView: IdCardFrontView
+
+    private fun initViews() {
+        viewFinder = findViewById(R.id.viewFinder)
+        startBtn = findViewById(R.id.startBtn)
+        stopBtn = findViewById(R.id.stopBtn)
+        clearNameBtn = findViewById(R.id.clearNameBtn)
+        clearGenderBtn = findViewById(R.id.clearGenderBtn)
+        clearNationBtn = findViewById(R.id.clearNationBtn)
+        clearBirthBtn = findViewById(R.id.clearBirthBtn)
+        clearAddressBtn = findViewById(R.id.clearAddressBtn)
+        clearNumberBtn = findViewById(R.id.clearNumberBtn)
+        nameEdit = findViewById(R.id.nameEdit)
+        genderEdit = findViewById(R.id.genderEdit)
+        nationEdit = findViewById(R.id.nationEdit)
+        birthDateEdit = findViewById(R.id.birthDateEdit)
+        addressEdit = findViewById(R.id.addressEdit)
+        numberEdit = findViewById(R.id.numberEdit)
+        idCardFrontView = findViewById(R.id.idCardFrontView)
+        startBtn.setOnClickListener(this)
+        stopBtn.setOnClickListener(this)
+        clearNameBtn.setOnClickListener(this)
+        clearGenderBtn.setOnClickListener(this)
+        clearNationBtn.setOnClickListener(this)
+        clearBirthBtn.setOnClickListener(this)
+        clearAddressBtn.setOnClickListener(this)
+        clearNumberBtn.setOnClickListener(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.ocrEngine.doAngle = false//摄像头拍摄一般都是正的，不需要判断方向
@@ -64,7 +109,6 @@ class IdCardFrontActivity : AppCompatActivity(), View.OnClickListener {
         App.ocrEngine.boxScoreThresh = 0.1f
         App.ocrEngine.unClipRatio = 2.0f
         setContentView(R.layout.activity_idcard_front)
-        viewFinder = findViewById(R.id.viewFinder)
         initViews()
     }
 
@@ -130,17 +174,6 @@ class IdCardFrontActivity : AppCompatActivity(), View.OnClickListener {
         setEdit(birthDateEdit, result.birth)
         setEdit(addressEdit, result.address)
         setEdit(numberEdit, result.number)
-    }
-
-    private fun initViews() {
-        startBtn.setOnClickListener(this)
-        stopBtn.setOnClickListener(this)
-        clearNameBtn.setOnClickListener(this)
-        clearGenderBtn.setOnClickListener(this)
-        clearNationBtn.setOnClickListener(this)
-        clearBirthBtn.setOnClickListener(this)
-        clearAddressBtn.setOnClickListener(this)
-        clearNumberBtn.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {

@@ -3,7 +3,10 @@ package com.benjaminwan.ocr.ncnn
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -24,7 +27,7 @@ import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_camera.*
+import jsc.kit.cameramask.CameraLensView
 import kotlin.math.max
 
 class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -36,10 +39,45 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     private var camera: Camera? = null
     private lateinit var viewFinder: PreviewView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera)
-        App.ocrEngine.doAngle = false//摄像头一般不需要考虑倒过来的情况
+    private lateinit var clearBtn: Button
+    private lateinit var detectBtn: Button
+    private lateinit var resultBtn: Button
+    private lateinit var debugBtn: Button
+    private lateinit var paddingSeekBar: SeekBar
+    private lateinit var boxScoreThreshSeekBar: SeekBar
+    private lateinit var boxThreshSeekBar: SeekBar
+    private lateinit var maxSideLenSeekBar: SeekBar
+    private lateinit var scaleUnClipRatioSeekBar: SeekBar
+    private lateinit var cameraLensView: CameraLensView
+    private lateinit var maxSideLenTv: TextView
+    private lateinit var paddingTv: TextView
+    private lateinit var boxScoreThreshTv: TextView
+    private lateinit var boxThreshTv: TextView
+    private lateinit var unClipRatioTv: TextView
+    private lateinit var timeTV: TextView
+    private lateinit var loadingImg: ImageView
+
+    private fun findViews() {
+        clearBtn = findViewById(R.id.clearBtn)
+        detectBtn = findViewById(R.id.detectBtn)
+        resultBtn = findViewById(R.id.resultBtn)
+        debugBtn = findViewById(R.id.debugBtn)
+        paddingSeekBar = findViewById(R.id.paddingSeekBar)
+        boxScoreThreshSeekBar = findViewById(R.id.boxScoreThreshSeekBar)
+        boxThreshSeekBar = findViewById(R.id.boxThreshSeekBar)
+        maxSideLenSeekBar = findViewById(R.id.maxSideLenSeekBar)
+        scaleUnClipRatioSeekBar = findViewById(R.id.scaleUnClipRatioSeekBar)
+        cameraLensView = findViewById(R.id.cameraLensView)
+        maxSideLenTv = findViewById(R.id.maxSideLenTv)
+        paddingTv = findViewById(R.id.paddingTv)
+        boxScoreThreshTv = findViewById(R.id.boxScoreThreshTv)
+        boxThreshTv = findViewById(R.id.boxThreshTv)
+        unClipRatioTv = findViewById(R.id.unClipRatioTv)
+        timeTV = findViewById(R.id.timeTV)
+        loadingImg = findViewById(R.id.loadingImg)
+    }
+
+    private fun initViews() {
         clearBtn.setOnClickListener(this)
         detectBtn.setOnClickListener(this)
         resultBtn.setOnClickListener(this)
@@ -57,6 +95,14 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
         cameraLensView.postDelayed({
             updateMaxSideLen(100)
         }, 500)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.ocrEngine.doAngle = false//摄像头一般不需要考虑倒过来的情况
+        setContentView(R.layout.activity_camera)
+        findViews()
+        initViews()
     }
 
     override fun onResume() {

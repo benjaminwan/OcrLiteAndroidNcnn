@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -28,7 +30,7 @@ import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_imei.*
+import jsc.kit.cameramask.CameraLensView
 import kotlin.math.max
 
 class ImeiActivity : AppCompatActivity(), View.OnClickListener {
@@ -53,6 +55,20 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             vibrator.vibrate(100)
         }
+    }
+
+    private lateinit var startBtn: Button
+    private lateinit var stopBtn: Button
+    private lateinit var resultEdit: EditText
+    private lateinit var cameraLensView: CameraLensView
+
+    private fun initViews() {
+        startBtn = findViewById(R.id.startBtn)
+        stopBtn = findViewById(R.id.stopBtn)
+        resultEdit = findViewById(R.id.resultEdit)
+        cameraLensView = findViewById(R.id.cameraLensView)
+        startBtn.setOnClickListener(this)
+        stopBtn.setOnClickListener(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,11 +133,6 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
         cameraLensView.cameraLensBitmap = result.boxImg
         resultEdit.setText(result.strRes)
         resultEdit.setSelection(result.strRes.length)
-    }
-
-    private fun initViews() {
-        startBtn.setOnClickListener(this)
-        stopBtn.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {

@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -28,7 +30,7 @@ import com.uber.autodispose.android.lifecycle.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_plate.*
+import jsc.kit.cameramask.CameraLensView
 import kotlin.math.max
 
 class PlateActivity : AppCompatActivity(), View.OnClickListener {
@@ -55,6 +57,21 @@ class PlateActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private lateinit var startBtn: Button
+    private lateinit var stopBtn: Button
+    private lateinit var resultEdit: EditText
+    private lateinit var cameraLensView: CameraLensView
+
+    private fun initViews() {
+        viewFinder = findViewById(R.id.viewFinder)
+        startBtn = findViewById(R.id.startBtn)
+        stopBtn = findViewById(R.id.stopBtn)
+        resultEdit = findViewById(R.id.resultEdit)
+        cameraLensView = findViewById(R.id.cameraLensView)
+        startBtn.setOnClickListener(this)
+        stopBtn.setOnClickListener(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.ocrEngine.doAngle = false//摄像头拍摄一般都是正的，不需要判断方向
@@ -62,7 +79,6 @@ class PlateActivity : AppCompatActivity(), View.OnClickListener {
         App.ocrEngine.boxScoreThresh = 0.2f
         App.ocrEngine.unClipRatio = 2.0f
         setContentView(R.layout.activity_plate)
-        viewFinder = findViewById(R.id.viewFinder)
         initViews()
     }
 
@@ -122,10 +138,7 @@ class PlateActivity : AppCompatActivity(), View.OnClickListener {
         resultEdit.setSelection(result.strRes.length)
     }
 
-    private fun initViews() {
-        startBtn.setOnClickListener(this)
-        stopBtn.setOnClickListener(this)
-    }
+
 
     override fun onClick(view: View?) {
         view ?: return
