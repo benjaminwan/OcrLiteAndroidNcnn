@@ -91,7 +91,8 @@ jobs:
         run: |
           path1=$(find app/build/outputs/apk/cpu/release -name '*.apk' -type f | head -1)
           path2=$(find app/build/outputs/apk/gpu/release -name '*.apk' -type f | head -1)
-          echo "::set-output name=path::$path1::$path2"
+          echo "::set-output name=path1::$path1"
+          echo "::set-output name=path2::$path2"
 
       # 获取apk版本号
       # https://github.com/marketplace/actions/apk-info-action
@@ -99,7 +100,7 @@ jobs:
         id: apk-info
         uses: hkusu/apk-info-action@v1
         with:
-          apk-path: ${{ steps.apk-path.outputs.path }}
+          apk-path: ${{ steps.apk-path.outputs.path1 }}
 
       # 获取指定时区的时间
       # https://github.com/marketplace/actions/get-time-action
@@ -124,7 +125,8 @@ jobs:
       - name: Show info
         if: always()
         run: |
-          echo '${{ steps.apk-path.outputs.path }}'
+          echo '${{ steps.apk-path.outputs.path1 }}'
+          echo '${{ steps.apk-path.outputs.path2 }}'
           echo '${{ steps.apk-info.outputs.result }}' # get apk info success or failure
           echo '${{ steps.time.outputs.time }}'
           echo '${{ steps.git-log.outputs.log }}'
@@ -173,6 +175,7 @@ jobs:
           body_path: Release.txt
           draft: true
           files: |
-            ${{ steps.apk-path.outputs.path }}
+            ${{ steps.apk-path.outputs.path1 }}
+            ${{ steps.apk-path.outputs.path2 }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
