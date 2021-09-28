@@ -69,7 +69,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 
 #### 2021-09-28 update
 
-* 适配opencv 4.5.3
+* 适配opencv 3.4.15(特别说明：4.5.3也可以支持，如果换成cv4，minSdkVersion必须改为24)
 * 适配ncnn 20210720
 * 升级kotlin: 1.5.31
 * 升级gradle: 4.0.2

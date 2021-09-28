@@ -35,11 +35,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 下载opencv-mobile-4.5.3-android.7z并解压到OcrLibrary/src
-      - name: Download opencv-mobile-4.5.3-android.7z
+      # 下载opencv-mobile-3.4.15-android.zip并解压到OcrLibrary/src
+      - name: Download opencv-mobile-3.4.15-android.zip
         run: |
-          wget https://github.com/benjaminwan/OcrLiteAndroidNcnn/releases/download/1.0.0.20201007/opencv-mobile-4.5.3-android.7z -O opencv-mobile-4.5.3-android.7z
-          7z x opencv-mobile-4.5.3-android.7z -aoa
+          wget https://github.com/nihui/opencv-mobile/releases/download/v13/opencv-mobile-3.4.15-android.zip -O opencv-mobile-3.4.15-android.zip
+          unzip -q opencv-mobile-3.4.15-android.zip
           mv opencv-mobile-4.5.3-android/sdk OcrLibrary/src
 
       # 下载ncnn-20210720-android.zip并解压到OcrLibrary/src/main/ncnn
