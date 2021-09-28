@@ -73,6 +73,8 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 * 适配ncnn 20210720
 * 升级kotlin: 1.5.31
 * 升级gradle: 7.0.2
+* 升级各dependencies
+* 使用kotlin coroutines代替rxjava
 
 ## 编译说明
 
