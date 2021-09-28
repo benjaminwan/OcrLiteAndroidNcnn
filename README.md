@@ -31,7 +31,7 @@
 
 ## 联系方式
 
-* QQ①群:994929053
+* QQ①群：994929053
 * QQ②群：820132154
 
 ## 项目完整源码
@@ -160,6 +160,7 @@ OcrLibrary/build
 ```
 OcrLiteAndroidNcnn
     ├── app               # demo app
+    ├── capture           # 截图
     ├── common-aar        # app引用的aar库
     ├── keystore          # app签名密钥文件
     ├── OcrLibrary        # Ocr引擎库，包含Jni和C++代码
