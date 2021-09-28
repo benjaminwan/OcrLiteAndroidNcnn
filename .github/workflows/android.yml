@@ -40,7 +40,7 @@ jobs:
         run: |
           wget https://github.com/nihui/opencv-mobile/releases/download/v13/opencv-mobile-3.4.15-android.zip -O opencv-mobile-3.4.15-android.zip
           unzip -q opencv-mobile-3.4.15-android.zip
-          mv opencv-mobile-4.5.3-android/sdk OcrLibrary/src
+          mv opencv-mobile-3.4.15-android/sdk OcrLibrary/src
 
       # 下载ncnn-20210720-android.zip并解压到OcrLibrary/src/main/ncnn
       - name: Download ncnn-20210720-android.zip
