@@ -110,7 +110,7 @@ TextLine CrnnNet::getTextLine(const cv::Mat &src) {
     int dstWidth = int((float) src.cols * scale);
 
     cv::Mat srcResize;
-    resize(src, srcResize, cv::Size(dstWidth, dstHeight));
+    cv::resize(src, srcResize, cv::Size(dstWidth, dstHeight));
 
     ncnn::Mat input = ncnn::Mat::from_pixels(
             srcResize.data, ncnn::Mat::PIXEL_RGB,
