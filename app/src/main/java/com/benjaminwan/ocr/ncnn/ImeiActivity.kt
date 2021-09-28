@@ -14,6 +14,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.assent.Permission
 import com.afollestad.assent.askForPermissions
 import com.afollestad.assent.isAllGranted
@@ -26,11 +27,13 @@ import com.benjaminwan.ocrlibrary.OcrFailed
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.benjaminwan.ocrlibrary.OcrStop
 import com.orhanobut.logger.Logger
-import com.uber.autodispose.android.lifecycle.autoDisposable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import jsc.kit.cameramask.CameraLensView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import kotlin.math.max
 
 class ImeiActivity : AppCompatActivity(), View.OnClickListener {
@@ -160,17 +163,21 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
         resultEdit.isEnabled = !isStart
     }
 
+    private fun getBitMap(): Bitmap? {
+        val camPic = viewFinder.bitmap ?: return null
+        if (camPic.width <= 0 || camPic.height <= 0) return null
+        return cameraLensView.cropCameraLensRectBitmap(camPic, false)
+    }
+
     private fun detectLoop() {
         cameraLensView.cameraLensBitmap = null
         resultEdit.setText("")
         setDetectState(true)
-        Observable.fromCallable {
+        flow {
             var success: OcrResult? = null
             do {
-                val camPic = viewFinder.bitmap ?: continue
-                if (camPic.width <= 0 || camPic.height <= 0) continue
-                val bitmap =
-                    cameraLensView.cropCameraLensRectBitmap(camPic, false)
+                val bitmap = withContext(Dispatchers.Main) { getBitMap() }
+                bitmap ?: continue
                 val once = detectOnce(bitmap)
                 Logger.i(once.strRes)
                 val matchId = getMatchImeiStr(once.strRes.replaceBlank().toUpperCase())
@@ -178,16 +185,15 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
                     success = once.copy(strRes = matchId)
                 }
             } while (success == null && detectStart)
-            success ?: if (!detectStart) {
+            val result = success ?: if (!detectStart) {
                 OcrStop
             } else {
                 OcrFailed
             }
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.IO)
+            .onEach {
                 when (it) {
                     is OcrResult -> {
                         setDetectState(false)
@@ -201,9 +207,8 @@ class ImeiActivity : AppCompatActivity(), View.OnClickListener {
                         detectLoop()
                     }
                 }
-            }, {
-                detectLoop()
-            })
+            }
+            .launchIn(lifecycleScope)
     }
 
     private fun startCamera() {

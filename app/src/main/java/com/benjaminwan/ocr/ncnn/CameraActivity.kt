@@ -12,6 +12,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.assent.Permission
 import com.afollestad.assent.askForPermissions
 import com.afollestad.assent.isAllGranted
@@ -23,11 +24,9 @@ import com.benjaminwan.ocr.ncnn.utils.showToast
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.bumptech.glide.Glide
 import com.orhanobut.logger.Logger
-import com.uber.autodispose.android.lifecycle.autoDisposable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import jsc.kit.cameramask.CameraLensView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlin.math.max
 
 class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -244,23 +243,25 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     }
 
     private fun detect(reSize: Int) {
-        Single.fromCallable {
-            val src = cameraLensView.cropCameraLensRectBitmap(viewFinder.bitmap, false)
-            val boxImg: Bitmap = Bitmap.createBitmap(
-                src.width, src.height, Bitmap.Config.ARGB_8888
-            )
-            Logger.i("selectedImg=${src.height},${src.width} ${src.config}")
-            App.ocrEngine.detect(src, boxImg, reSize)
-        }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { showLoading() }
-            .doFinally { hideLoading() }
-            .autoDisposable(this)
-            .subscribe { t1, t2 ->
-                ocrResult = t1
-                timeTV.text = "识别时间:${t1.detectTime.toInt()}ms"
-                cameraLensView.cameraLensBitmap = t1.boxImg
+        flow {
+            emit(cameraLensView.cropCameraLensRectBitmap(viewFinder.bitmap, false))
+        }.flowOn(Dispatchers.Main)
+            .map { src ->
+                val boxImg: Bitmap = Bitmap.createBitmap(
+                    src.width, src.height, Bitmap.Config.ARGB_8888
+                )
+                Logger.i("selectedImg=${src.height},${src.width} ${src.config}")
+                App.ocrEngine.detect(src, boxImg, reSize)
             }
+            .flowOn(Dispatchers.IO)
+            .onStart { showLoading() }
+            .onCompletion { hideLoading() }
+            .onEach {
+                ocrResult = it
+                timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
+                cameraLensView.cameraLensBitmap = it.boxImg
+            }
+            .launchIn(lifecycleScope)
     }
 
     private fun startCamera() {
