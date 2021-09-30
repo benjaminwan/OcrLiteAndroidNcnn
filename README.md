@@ -61,16 +61,16 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 2. Native层以C++编写；
 3. Demo App以Kotlin-JVM编写；
 4. Android版与其它版本不同，包含了几个应用场景，包括相册识别、摄像头识别、手机IMEI号识别、摄像头身份证识别这几个功能页面；
-5. 适配opencv 3.4.15，使用了[opencv-mobile](https://github.com/nihui/opencv-mobile)的代码，编译脚本在script文件夹里；
-6. 适配ncnn 20210720；
+5. opencv 3.4.15，使用了[opencv-mobile](https://github.com/nihui/opencv-mobile)的代码，编译脚本在script文件夹里；
+6. ncnn 20210720；
 7. 可选择CPU版或GPU版；CPU版仅支持CPU运算，最低支持API21，且安装包体积小；GPU版支持vulkan(GPU加速)，最低支持API24，安装包体积较大；
 
 ## 更新说明
 
 #### 2021-09-28 update
 
-* 适配opencv 3.4.15(特别说明：4.5.3也可以支持，如果换成cv4，minSdkVersion必须改为24)
-* 适配ncnn 20210720
+* opencv 3.4.15(特别说明：4.5.3也可以支持，如果换成cv4，minSdkVersion必须改为24)
+* ncnn 20210720
 * 升级kotlin: 1.5.31
 * 升级gradle: 7.0.2
 * 升级各dependencies
@@ -95,8 +95,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
   └── keys.txt
   ```
 
-5.
-下载opencv-mobile-3.4.15-android.7z，[下载地址](https://gitee.com/benjaminwan/ocr-lite-android-ncnn/attach_files/843219/download/opencv-mobile-3.4.15-android.7z)
+5. 下载opencv-mobile-3.4.15-android.7z，[下载地址](https://gitee.com/benjaminwan/ocr-lite-android-ncnn/attach_files/843219/download/opencv-mobile-3.4.15-android.7z)
 解压后目录结构为
 
 ```
@@ -168,7 +167,7 @@ OcrLiteAndroidNcnn
     ├── common-aar        # app引用的aar库
     ├── keystore          # app签名密钥文件
     ├── OcrLibrary        # Ocr引擎库，包含Jni和C++代码
-    └── scripts           # 编译脚本，用于编译精简定制opencv3
+    └── scripts           # 编译脚本
 ```
 
 ## 常见问题
@@ -180,7 +179,7 @@ OcrLiteAndroidNcnn
 ## 关于作者
 
 * Android demo编写：[benjaminwan](https://github.com/benjaminwan)
-* ncnn模型开发：[DayBreak](https://github.com/DayBreak-u)
+* 模型开发：[DayBreak](https://github.com/DayBreak-u)
 
 ## 版权声明
 
