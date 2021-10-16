@@ -33,6 +33,7 @@
 
 * QQ①群：994929053
 * QQ②群：820132154
+* QQ③群：904091319
 
 ## 项目完整源码
 
@@ -95,7 +96,8 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
   └── keys.txt
   ```
 
-5. 下载opencv-mobile-3.4.15-android.7z，[下载地址](https://gitee.com/benjaminwan/ocr-lite-android-ncnn/attach_files/843219/download/opencv-mobile-3.4.15-android.7z)
+5.
+下载opencv-mobile-3.4.15-android.7z，[下载地址](https://gitee.com/benjaminwan/ocr-lite-android-ncnn/attach_files/843219/download/opencv-mobile-3.4.15-android.7z)
 解压后目录结构为
 
 ```
