@@ -43,7 +43,6 @@
 ## APK下载
 
 * 编译好的demo apk，可以在release中下载，或者Q群共享内下载，文件名例：OcrLiteAndroidNcnn-版本号-cpu-release.apk
-* 或者[Gitee下载](https://gitee.com/benjaminwan/ocr-lite-android-ncnn/releases)
 * 或者[Github下载](https://github.com/benjaminwan/OcrLiteAndroidNcnn/releases)
 
 ## 简介
@@ -68,7 +67,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 
 ## 更新说明
 
-#### 2021-09-28 update
+#### 2021-09-28 update 1.6.0
 
 * opencv 3.4.15(特别说明：4.5.3也可以支持，如果换成cv4，minSdkVersion必须改为24)
 * ncnn 20210720
@@ -76,6 +75,11 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 * 升级gradle: 7.0.2
 * 升级各dependencies
 * 使用kotlin coroutines代替rxjava
+
+#### 2021-10-28 update 1.6.1
+
+* 编辑build.gradle，把版本定义放到root build.gradle
+* 编辑github workflow config，上传aar文件到release
 
 ## 编译说明
 
