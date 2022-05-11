@@ -89,7 +89,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 
 ## 编译说明
 
-1. AndroidStudio 2021.1.1或以上；
+1. AndroidStudio 2021.2.1或以上；
 2. NDK下载，在SDK Tools中下载，版本选最新版；
 3. cmake 3.4.1或以上，最好是3.18.1，在SDK Tools中下载；
 4. [模型下载](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/models_ncnn)
