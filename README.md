@@ -125,10 +125,10 @@ OcrLiteAndroidNcnn/OcrLibrary/src/sdk
 
 * 目标是编译cpu版和gpu版，所以需要下载 "不带vulkan的"和"带vulkan的"两种库。
 * 但是每种库又分为静态库和动态库，所以一共就有四种库。
-* 下载ncnn-20210124-android.zip或ncnn-20210124-android-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn
+* 下载ncnn-20220420-android.zip或ncnn-20220420-android-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn
 *
 
-下载ncnn-20210124-android-vulkan.zip或ncnn-20210124-android-vulkan-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-vulkan
+下载ncnn-20220420-android-vulkan.zip或ncnn-20220420-android-vulkan-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-vulkan
 
 * 解压后目录结构为
 
