@@ -87,14 +87,19 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 * 升级gradle
 * 升级依赖库
 
+#### 2022-06-20 update 1.7.0
+
+* ncnn 20220420，更新后模型支持有变化，需要重新用ncnn自带的onnx2ncnn转换模型
+* 高版本的opencv会要求 Minimum required by OpenCV API level is android-24，所以目前仍停留在3.4.15
+* 如果不在意MinSdk，可自行[下载新版opencv](https://github.com/nihui/opencv-mobile/releases)
+
 ## 编译说明
 
 1. AndroidStudio 2021.2.1或以上；
 2. NDK下载，在SDK Tools中下载，版本选最新版；
 3. cmake 3.4.1或以上，最好是3.18.1，在SDK Tools中下载；
-4. [模型下载](https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/models_ncnn)
-   目录结构为
-
+4. 原始模型来自https://github.com/ouyanghuiyu/chineseocr_lite/tree/onnx/models_ncnn。
+5. 模型目录结构为
 ```
   OcrLiteAndroidNcnn/OcrLibrary/src/main/assets
   ├── angle_op.bin
@@ -117,7 +122,7 @@ OcrLiteAndroidNcnn/OcrLibrary/src/sdk
         └── staticlibs
 ```
 
-6. ncnn预编译库版本为 20210720 2c4ae09，[下载地址](https://github.com/Tencent/ncnn/releases/tag/20210720)
+6. ncnn预编译库版本为 20220420，[下载地址](https://github.com/Tencent/ncnn/releases/tag/20220420)
 
 * 目标是编译cpu版和gpu版，所以需要下载 "不带vulkan的"和"带vulkan的"两种库。
 * 但是每种库又分为静态库和动态库，所以一共就有四种库。
