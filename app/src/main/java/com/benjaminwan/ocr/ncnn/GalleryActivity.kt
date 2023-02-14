@@ -8,6 +8,10 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.afollestad.assent.Permission
+import com.afollestad.assent.askForPermissions
+import com.afollestad.assent.isAllGranted
+import com.afollestad.assent.rationale.createDialogRationale
 import com.benjaminwan.ocr.ncnn.app.App
 import com.benjaminwan.ocr.ncnn.databinding.ActivityGalleryBinding
 import com.benjaminwan.ocr.ncnn.dialog.DebugDialog
@@ -62,6 +66,30 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         binding = ActivityGalleryBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val rationaleHandler = createDialogRationale(R.string.storage_permission) {
+            onPermission(
+                Permission.READ_EXTERNAL_STORAGE, "请点击允许"
+            )
+        }
+
+        if (!isAllGranted(Permission.READ_EXTERNAL_STORAGE)) {
+            askForPermissions(
+                Permission.READ_EXTERNAL_STORAGE,
+                rationaleHandler = rationaleHandler
+            ) { result ->
+                val permissionGranted: Boolean =
+                    result.isAllGranted(
+                        Permission.READ_EXTERNAL_STORAGE
+                    )
+                if (!permissionGranted) {
+                    showToast("未获取权限，应用无法正常使用！")
+                }
+            }
+        }
     }
 
     override fun onClick(view: View?) {
