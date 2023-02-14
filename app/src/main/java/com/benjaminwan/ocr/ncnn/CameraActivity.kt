@@ -22,6 +22,7 @@ import com.benjaminwan.ocrlibrary.OcrResult
 import com.bumptech.glide.Glide
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlin.math.max
 
@@ -34,12 +35,15 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
+    private var detectJob: Job? = null
 
     private fun initViews() {
         binding.clearBtn.setOnClickListener(this)
         binding.detectBtn.setOnClickListener(this)
         binding.resultBtn.setOnClickListener(this)
         binding.debugBtn.setOnClickListener(this)
+        binding.stopBtn.setOnClickListener(this)
+        binding.stopBtn.isEnabled = false
         updatePadding(App.ocrEngine.padding)
         updateBoxScoreThresh((App.ocrEngine.boxScoreThresh * 100).toInt())
         updateBoxThresh((App.ocrEngine.boxThresh * 100).toInt())
@@ -102,7 +106,11 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
                 val ratio = binding.maxSideLenSeekBar.progress.toFloat() / 100.toFloat()
                 val maxSize = max(width, height)
                 val maxSideLen = (ratio * maxSize).toInt()
-                detect(maxSideLen)
+                detectJob = detect(maxSideLen)
+            }
+            R.id.stopBtn -> {
+                detectJob?.cancel()
+                clearLastResult()
             }
             R.id.resultBtn -> {
                 val result = ocrResult ?: return
@@ -195,32 +203,40 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     }
 
     private fun clearLastResult() {
+        ocrResult = null
         binding.cameraLensView.cameraLensBitmap = null
         binding.timeTV.text = ""
-        ocrResult = null
     }
 
-    private fun detect(reSize: Int) {
-        flow {
-            emit(binding.cameraLensView.cropCameraLensRectBitmap(binding.viewFinder.bitmap, false))
-        }.flowOn(Dispatchers.Main)
-            .map { src ->
-                val boxImg: Bitmap = Bitmap.createBitmap(
-                    src.width, src.height, Bitmap.Config.ARGB_8888
-                )
-                Logger.i("selectedImg=${src.height},${src.width} ${src.config}")
-                App.ocrEngine.detect(src, boxImg, reSize)
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart { showLoading() }
-            .onCompletion { hideLoading() }
-            .onEach {
-                ocrResult = it
-                binding.timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
-                binding.cameraLensView.cameraLensBitmap = it.boxImg
-            }
-            .launchIn(lifecycleScope)
-    }
+    private fun detect(reSize: Int) = flow {
+        emit(binding.cameraLensView.cropCameraLensRectBitmap(binding.viewFinder.bitmap, false))
+    }.flowOn(Dispatchers.Main)
+        .map { src ->
+            val boxImg: Bitmap = Bitmap.createBitmap(
+                src.width, src.height, Bitmap.Config.ARGB_8888
+            )
+            Logger.i("selectedImg=${src.height},${src.width} ${src.config}")
+            App.ocrEngine.detect(src, boxImg, reSize)
+        }
+        .flowOn(Dispatchers.IO)
+        .onStart {
+            showLoading()
+            binding.detectBtn.isEnabled = false
+            binding.stopBtn.isEnabled = true
+        }
+        .onCompletion {
+            binding.detectBtn.isEnabled = true
+            binding.stopBtn.isEnabled = false
+            hideLoading()
+            binding.resultBtn.callOnClick()
+        }
+        .onEach {
+            ocrResult = it
+            binding.timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
+            binding.cameraLensView.cameraLensBitmap = it.boxImg
+        }
+        .launchIn(lifecycleScope)
+
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
