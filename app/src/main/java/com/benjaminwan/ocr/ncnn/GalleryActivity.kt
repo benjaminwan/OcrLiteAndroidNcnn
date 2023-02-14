@@ -24,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlin.math.max
 
@@ -33,6 +34,10 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
 
     private var selectedImg: Bitmap? = null
     private var ocrResult: OcrResult? = null
+    private var detectJob: Job? = null
+
+    private val glideOptions =
+        RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
 
     private fun initViews() {
         binding.selectBtn.setOnClickListener(this)
@@ -40,6 +45,8 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         binding.resultBtn.setOnClickListener(this)
         binding.debugBtn.setOnClickListener(this)
         binding.benchBtn.setOnClickListener(this)
+        binding.stopBtn.setOnClickListener(this)
+        binding.stopBtn.isEnabled = false
         binding.doAngleSw.isChecked = App.ocrEngine.doAngle
         binding.mostAngleSw.isChecked = App.ocrEngine.mostAngle
         updatePadding(App.ocrEngine.padding)
@@ -104,11 +111,20 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
                 )
             }
             R.id.detectBtn -> {
-                val img = selectedImg ?: return
+                val img = selectedImg
+                if (img == null) {
+                    showToast("请先选择一张图片")
+                    return
+                }
                 val ratio = binding.maxSideLenSeekBar.progress.toFloat() / 100.toFloat()
                 val maxSize = max(img.width, img.height)
                 val maxSideLen = (ratio * maxSize).toInt()
-                detect(img, maxSideLen)
+                detectJob = detect(img, maxSideLen)
+            }
+            R.id.stopBtn -> {
+                detectJob?.cancel()
+                clearLoading()
+                ocrResult = null
             }
             R.id.resultBtn -> {
                 val result = ocrResult ?: return
@@ -130,7 +146,7 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
                     showToast("请先选择一张图片")
                     return
                 }
-                val loop = 100
+                val loop = 50
                 showToast("开始循环${loop}次的测试")
                 benchmark(img, loop)
             }
@@ -208,9 +224,7 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         data ?: return
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_SELECT_IMAGE) {
             val imgUri = data.data ?: return
-            val options =
-                RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
-            Glide.with(this).load(imgUri).apply(options).into(binding.imageView)
+            Glide.with(this).load(imgUri).apply(glideOptions).into(binding.imageView)
             selectedImg = decodeUri(imgUri)
             updateMaxSideLen(binding.maxSideLenSeekBar.progress)
             clearLastResult()
@@ -221,47 +235,60 @@ class GalleryActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSee
         Glide.with(this).load(R.drawable.loading_anim).into(binding.imageView)
     }
 
+    private fun clearLoading() {
+        Glide.with(this).clear(binding.imageView)
+    }
+
     private fun clearLastResult() {
         binding.timeTV.text = ""
         ocrResult = null
     }
 
-    private fun benchmark(img: Bitmap, loop: Int) {
-        flow {
-            val aveTime = App.ocrEngine.benchmark(img, loop)
-            //showToast("循环${loop}次，平均时间${aveTime}ms")
-            emit(aveTime)
-        }.flowOn(Dispatchers.IO)
-            .onStart { showLoading() }
-            .onEach {
-                binding.timeTV.text = "循环${loop}次，平均时间${it}ms"
-                Glide.with(this).clear(binding.imageView)
-            }
-            .launchIn(lifecycleScope)
-    }
+    private fun benchmark(img: Bitmap, loop: Int) = flow {
+        val aveTime = App.ocrEngine.benchmark(img, loop)
+        //showToast("循环${loop}次，平均时间${aveTime}ms")
+        emit(aveTime)
+    }.flowOn(Dispatchers.IO)
+        .onStart {
+            showLoading()
+            binding.benchBtn.isEnabled = false
+        }
+        .onCompletion {
+            binding.benchBtn.isEnabled = true
+            clearLoading()
+        }
+        .onEach {
+            binding.timeTV.text = "循环${loop}次，平均时间${it}ms"
+        }
+        .launchIn(lifecycleScope)
 
-    private fun detect(img: Bitmap, reSize: Int) {
-        flow {
-            val boxImg: Bitmap = Bitmap.createBitmap(
-                img.width, img.height, Bitmap.Config.ARGB_8888
-            )
-            Logger.i("selectedImg=${img.height},${img.width} ${img.config}")
-            val start = System.currentTimeMillis()
-            val ocrResult = App.ocrEngine.detect(img, boxImg, reSize)
-            val end = System.currentTimeMillis()
-            val time = "time=${end - start}ms"
-            emit(ocrResult)
-        }.flowOn(Dispatchers.IO)
-            .onStart { showLoading() }
-            .onEach {
-                ocrResult = it
-                binding.timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
-                val options =
-                    RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
-                Glide.with(this).load(it.boxImg).apply(options).into(binding.imageView)
-                Logger.i("$it")
-            }.launchIn(lifecycleScope)
-    }
+    private fun detect(img: Bitmap, reSize: Int) = flow {
+        val boxImg: Bitmap = Bitmap.createBitmap(
+            img.width, img.height, Bitmap.Config.ARGB_8888
+        )
+        Logger.i("selectedImg=${img.height},${img.width} ${img.config}")
+        val start = System.currentTimeMillis()
+        val ocrResult = App.ocrEngine.detect(img, boxImg, reSize)
+        val end = System.currentTimeMillis()
+        val time = "time=${end - start}ms"
+        emit(ocrResult)
+    }.flowOn(Dispatchers.IO)
+        .onStart {
+            showLoading()
+            binding.detectBtn.isEnabled = false
+            binding.stopBtn.isEnabled = true
+        }
+        .onCompletion {
+            binding.detectBtn.isEnabled = true
+            binding.stopBtn.isEnabled = false
+            binding.resultBtn.callOnClick()
+        }
+        .onEach {
+            ocrResult = it
+            binding.timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
+            Glide.with(this).load(it.boxImg).apply(glideOptions).into(binding.imageView)
+            Logger.i("$it")
+        }.launchIn(lifecycleScope)
 
     companion object {
         const val REQUEST_SELECT_IMAGE = 666
