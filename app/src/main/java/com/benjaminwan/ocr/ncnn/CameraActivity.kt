@@ -3,14 +3,10 @@ package com.benjaminwan.ocr.ncnn
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.assent.Permission
@@ -18,80 +14,42 @@ import com.afollestad.assent.askForPermissions
 import com.afollestad.assent.isAllGranted
 import com.afollestad.assent.rationale.createDialogRationale
 import com.benjaminwan.ocr.ncnn.app.App
+import com.benjaminwan.ocr.ncnn.databinding.ActivityCameraBinding
 import com.benjaminwan.ocr.ncnn.dialog.DebugDialog
 import com.benjaminwan.ocr.ncnn.dialog.TextResultDialog
 import com.benjaminwan.ocr.ncnn.utils.showToast
 import com.benjaminwan.ocrlibrary.OcrResult
 import com.bumptech.glide.Glide
 import com.orhanobut.logger.Logger
-import jsc.kit.cameramask.CameraLensView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlin.math.max
 
 class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
+    private lateinit var binding: ActivityCameraBinding
+
     private var ocrResult: OcrResult? = null
 
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
-    private lateinit var viewFinder: PreviewView
-
-    private lateinit var clearBtn: Button
-    private lateinit var detectBtn: Button
-    private lateinit var resultBtn: Button
-    private lateinit var debugBtn: Button
-    private lateinit var paddingSeekBar: SeekBar
-    private lateinit var boxScoreThreshSeekBar: SeekBar
-    private lateinit var boxThreshSeekBar: SeekBar
-    private lateinit var maxSideLenSeekBar: SeekBar
-    private lateinit var scaleUnClipRatioSeekBar: SeekBar
-    private lateinit var cameraLensView: CameraLensView
-    private lateinit var maxSideLenTv: TextView
-    private lateinit var paddingTv: TextView
-    private lateinit var boxScoreThreshTv: TextView
-    private lateinit var boxThreshTv: TextView
-    private lateinit var unClipRatioTv: TextView
-    private lateinit var timeTV: TextView
-    private lateinit var loadingImg: ImageView
-
-    private fun findViews() {
-        clearBtn = findViewById(R.id.clearBtn)
-        detectBtn = findViewById(R.id.detectBtn)
-        resultBtn = findViewById(R.id.resultBtn)
-        debugBtn = findViewById(R.id.debugBtn)
-        paddingSeekBar = findViewById(R.id.paddingSeekBar)
-        boxScoreThreshSeekBar = findViewById(R.id.boxScoreThreshSeekBar)
-        boxThreshSeekBar = findViewById(R.id.boxThreshSeekBar)
-        maxSideLenSeekBar = findViewById(R.id.maxSideLenSeekBar)
-        scaleUnClipRatioSeekBar = findViewById(R.id.scaleUnClipRatioSeekBar)
-        cameraLensView = findViewById(R.id.cameraLensView)
-        maxSideLenTv = findViewById(R.id.maxSideLenTv)
-        paddingTv = findViewById(R.id.paddingTv)
-        boxScoreThreshTv = findViewById(R.id.boxScoreThreshTv)
-        boxThreshTv = findViewById(R.id.boxThreshTv)
-        unClipRatioTv = findViewById(R.id.unClipRatioTv)
-        timeTV = findViewById(R.id.timeTV)
-        loadingImg = findViewById(R.id.loadingImg)
-    }
 
     private fun initViews() {
-        clearBtn.setOnClickListener(this)
-        detectBtn.setOnClickListener(this)
-        resultBtn.setOnClickListener(this)
-        debugBtn.setOnClickListener(this)
+        binding.clearBtn.setOnClickListener(this)
+        binding.detectBtn.setOnClickListener(this)
+        binding.resultBtn.setOnClickListener(this)
+        binding.debugBtn.setOnClickListener(this)
         updatePadding(App.ocrEngine.padding)
         updateBoxScoreThresh((App.ocrEngine.boxScoreThresh * 100).toInt())
         updateBoxThresh((App.ocrEngine.boxThresh * 100).toInt())
         updateUnClipRatio((App.ocrEngine.unClipRatio * 10).toInt())
-        paddingSeekBar.setOnSeekBarChangeListener(this)
-        boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
-        boxThreshSeekBar.setOnSeekBarChangeListener(this)
-        maxSideLenSeekBar.setOnSeekBarChangeListener(this)
-        scaleUnClipRatioSeekBar.setOnSeekBarChangeListener(this)
-        viewFinder = findViewById(R.id.viewFinder)
-        cameraLensView.postDelayed({
+        binding.paddingSeekBar.setOnSeekBarChangeListener(this)
+        binding.boxScoreThreshSeekBar.setOnSeekBarChangeListener(this)
+        binding.boxThreshSeekBar.setOnSeekBarChangeListener(this)
+        binding.maxSideLenSeekBar.setOnSeekBarChangeListener(this)
+        binding.scaleUnClipRatioSeekBar.setOnSeekBarChangeListener(this)
+        binding.cameraLensView.postDelayed({
             updateMaxSideLen(100)
         }, 500)
     }
@@ -99,8 +57,8 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.ocrEngine.doAngle = false//摄像头一般不需要考虑倒过来的情况
-        setContentView(R.layout.activity_camera)
-        findViews()
+        binding = ActivityCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initViews()
     }
 
@@ -139,9 +97,9 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
                 clearLastResult()
             }
             R.id.detectBtn -> {
-                val width = cameraLensView.measuredWidth * 9 / 10
-                val height = cameraLensView.measuredHeight * 9 / 10
-                val ratio = maxSideLenSeekBar.progress.toFloat() / 100.toFloat()
+                val width = binding.cameraLensView.measuredWidth * 9 / 10
+                val height = binding.cameraLensView.measuredHeight * 9 / 10
+                val ratio = binding.maxSideLenSeekBar.progress.toFloat() / 100.toFloat()
                 val maxSize = max(width, height)
                 val maxSideLen = (ratio * maxSize).toInt()
                 detect(maxSideLen)
@@ -195,56 +153,56 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     }
 
     private fun updateMaxSideLen(progress: Int) {
-        val width = cameraLensView.measuredWidth * 9 / 10
-        val height = cameraLensView.measuredHeight * 9 / 10
+        val width = binding.cameraLensView.measuredWidth * 9 / 10
+        val height = binding.cameraLensView.measuredHeight * 9 / 10
         val ratio = progress.toFloat() / 100.toFloat()
         val maxSize = max(width, height)
         val maxSideLen = (ratio * maxSize).toInt()
         Logger.i("======$width,$height,$ratio,$maxSize,$maxSideLen")
-        maxSideLenTv.text = "MaxSideLen:$maxSideLen(${ratio * 100}%)"
+        binding.maxSideLenTv.text = "MaxSideLen:$maxSideLen(${ratio * 100}%)"
     }
 
     private fun updatePadding(progress: Int) {
-        paddingTv.text = "Padding:$progress"
+        binding.paddingTv.text = "Padding:$progress"
         App.ocrEngine.padding = progress
     }
 
     private fun updateBoxScoreThresh(progress: Int) {
         val thresh = progress.toFloat() / 100.toFloat()
-        boxScoreThreshTv.text = "${getString(R.string.box_score_thresh)}:$thresh"
+        binding.boxScoreThreshTv.text = "${getString(R.string.box_score_thresh)}:$thresh"
         App.ocrEngine.boxScoreThresh = thresh
     }
 
     private fun updateBoxThresh(progress: Int) {
         val thresh = progress.toFloat() / 100.toFloat()
-        boxThreshTv.text = "BoxThresh:$thresh"
+        binding.boxThreshTv.text = "BoxThresh:$thresh"
         App.ocrEngine.boxThresh = thresh
     }
 
     private fun updateUnClipRatio(progress: Int) {
         val scale = progress.toFloat() / 10.toFloat()
-        unClipRatioTv.text = "${getString(R.string.box_un_clip_ratio)}:$scale"
+        binding.unClipRatioTv.text = "${getString(R.string.box_un_clip_ratio)}:$scale"
         App.ocrEngine.unClipRatio = scale
     }
 
     private fun showLoading() {
-        loadingImg.visibility = View.VISIBLE
-        Glide.with(this).load(R.drawable.loading_anim).into(loadingImg)
+        binding.loadingImg.visibility = View.VISIBLE
+        Glide.with(this).load(R.drawable.loading_anim).into(binding.loadingImg)
     }
 
     private fun hideLoading() {
-        loadingImg.visibility = View.GONE
+        binding.loadingImg.visibility = View.GONE
     }
 
     private fun clearLastResult() {
-        cameraLensView.cameraLensBitmap = null
-        timeTV.text = ""
+        binding.cameraLensView.cameraLensBitmap = null
+        binding.timeTV.text = ""
         ocrResult = null
     }
 
     private fun detect(reSize: Int) {
         flow {
-            emit(cameraLensView.cropCameraLensRectBitmap(viewFinder.bitmap, false))
+            emit(binding.cameraLensView.cropCameraLensRectBitmap(binding.viewFinder.bitmap, false))
         }.flowOn(Dispatchers.Main)
             .map { src ->
                 val boxImg: Bitmap = Bitmap.createBitmap(
@@ -258,8 +216,8 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
             .onCompletion { hideLoading() }
             .onEach {
                 ocrResult = it
-                timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
-                cameraLensView.cameraLensBitmap = it.boxImg
+                binding.timeTV.text = "识别时间:${it.detectTime.toInt()}ms"
+                binding.cameraLensView.cameraLensBitmap = it.boxImg
             }
             .launchIn(lifecycleScope)
     }
@@ -290,17 +248,12 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
 
                 // Bind use cases to camera
                 camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-                preview?.setSurfaceProvider(viewFinder.surfaceProvider)
+                preview?.setSurfaceProvider(binding.viewFinder.surfaceProvider)
             } catch (exc: Exception) {
                 Logger.e("Use case binding failed", exc.message.toString())
             }
 
         }, ContextCompat.getMainExecutor(this))
     }
-
-    companion object {
-        const val REQUEST_SELECT_IMAGE = 666
-    }
-
 
 }
