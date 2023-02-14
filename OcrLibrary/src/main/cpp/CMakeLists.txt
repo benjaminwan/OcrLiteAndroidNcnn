@@ -1,6 +1,6 @@
 project(OcrLite)
 
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.22.1)
 
 option(OCR_LITE_VULKAN "OcrLite Enable Vulkan" ON)
 #set(OCR_LITE_VULKAN ON)
