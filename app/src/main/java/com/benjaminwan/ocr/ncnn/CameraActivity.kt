@@ -31,7 +31,6 @@ class CameraActivity : AppCompatActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var binding: ActivityCameraBinding
 
     private var ocrResult: OcrResult? = null
-
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
