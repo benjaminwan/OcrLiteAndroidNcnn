@@ -97,7 +97,7 @@ Chineseocr Lite Android Ncnn Demo，超轻量级中文OCR Android Demo，支持n
 
 * 增加相册识别和相机识别停止按钮
 * 添加 Java demo
-* 适配ncnn
+* 适配ncnn 20221128
 
 ### [编译说明](./BUILD.md)
 
