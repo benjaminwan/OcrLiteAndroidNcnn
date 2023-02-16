@@ -26,14 +26,14 @@ OcrLiteAndroidNcnn/OcrLibrary/src/sdk
         └── staticlibs
 ```
 
-6. ncnn预编译库版本为 20220420，[下载地址](https://github.com/Tencent/ncnn/releases/tag/20220420)
+6. ncnn预编译库版本为 20221128，[下载地址](https://github.com/Tencent/ncnn/releases/tag/20221128)
 
 * 目标是编译cpu版和gpu版，所以需要下载 "不带vulkan的"和"带vulkan的"两种库。
 * 但是每种库又分为静态库和动态库，所以一共就有四种库。
-* 下载ncnn-20220420-android.zip或ncnn-20220420-android-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn
+* 下载ncnn-20221128-android.zip或ncnn-20221128-android-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn
 *
 
-下载ncnn-20220420-android-vulkan.zip或ncnn-20220420-android-vulkan-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-vulkan
+下载ncnn-20221128-android-vulkan.zip或ncnn-20221128-android-vulkan-shared.zip，二选一，解压到OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-vulkan
 
 * 解压后目录结构为
 
