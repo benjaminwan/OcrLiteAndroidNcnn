@@ -64,8 +64,8 @@ OcrLiteAndroidNcnn/OcrLibrary/src/main/ncnn-vulkan
 * 先在左侧边栏中找到"Build Variants"选项卡
 * 在选项卡里，有app和OcrLibrary两项，且"Active Build Variant"可以选择CpuDebug/CpuRelease/GpuDebug/GpuRelease
 * 选中需要的"Active Build Variant"，注意app和OcrLibrary必须选择相同选项，等待刷新，然后直接用工具栏的运行或调试按钮启动。
-* 选中cpu版时: minSdkVersion=21，最终编译出来的apk大约21MB
-* 选中gpu版时:minSdkVersion=24，因为sdk24(Android N/7.0)启用了新的打包和签名方式，再加上vulkan支持增加了不少体积，最终apk大约58MB
+* 选中cpu版时: minSdkVersion=21，最终编译出来的apk较小
+* 选中gpu版时:minSdkVersion=24，因为sdk24(Android N/7.0)启用了新的打包和签名方式，再加上vulkan支持，会增加了不少体积
 
 ### 重新编译
 
