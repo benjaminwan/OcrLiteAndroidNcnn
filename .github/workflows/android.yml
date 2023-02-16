@@ -9,6 +9,12 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+
+    env:
+      NCNN_VERSION: 20221128
+      NCNN_CPU_PKG_NAME: ncnn-20221128-android
+      NCNN_GPU_PKG_NAME: ncnn-20221128-android-vulkan
+
     steps:
       # 检出代码
       - uses: actions/checkout@v3
@@ -42,23 +48,23 @@ jobs:
           7z x opencv-mobile-3.4.15-android.7z -aoa
           mv opencv-mobile-3.4.15-android/sdk OcrLibrary/src
 
-      # 下载ncnn-20220420-android.zip并解压到OcrLibrary/src/main/ncnn
-      - name: Download ncnn-20220420-android.zip
+      # 下载ncnn cpu 并解压到OcrLibrary/src/main/ncnn
+      - name: Download ncnn-version-android.zip
         run: |
-          wget https://github.com/Tencent/ncnn/releases/download/20220420/ncnn-20220420-android.zip -O ncnn-20220420-android.zip
-          unzip -q ncnn-20220420-android.zip
-          mv ncnn-20220420-android OcrLibrary/src/main/ncnn
+          wget https://github.com/Tencent/ncnn/releases/download/${{ env.NCNN_VERSION }}/${{ env.NCNN_CPU_PKG_NAME }}.zip -O ${{ env.NCNN_CPU_PKG_NAME }}.zip
+          unzip -q ${{ env.NCNN_CPU_PKG_NAME }}.zip
+          mv ${{ env.NCNN_CPU_PKG_NAME }} OcrLibrary/src/main/ncnn
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn/arm64-v8a/lib/cmake/ncnn/ncnn.cmake
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn/armeabi-v7a/lib/cmake/ncnn/ncnn.cmake
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn/x86/lib/cmake/ncnn/ncnn.cmake
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn/x86_64/lib/cmake/ncnn/ncnn.cmake
 
-      # 下载ncnn-20220420-android-vulkan.zip并解压到OcrLibrary/src/main/ncnn-vulkan
-      - name: Download ncnn-20220420-android-vulkan.zip
+      # 下载ncnn gpu 并解压到OcrLibrary/src/main/ncnn-vulkan
+      - name: Download ncnn-version-android-vulkan.zip
         run: |
-          wget https://github.com/Tencent/ncnn/releases/download/20220420/ncnn-20220420-android-vulkan.zip -O ncnn-20220420-android-vulkan.zip
-          unzip -q ncnn-20220420-android-vulkan.zip
-          mv ncnn-20220420-android-vulkan OcrLibrary/src/main/ncnn-vulkan
+          wget https://github.com/Tencent/ncnn/releases/download/${{ env.NCNN_VERSION }}/${{ env.NCNN_GPU_PKG_NAME }}.zip -O ${{ env.NCNN_GPU_PKG_NAME }}.zip
+          unzip -q ${{ env.NCNN_GPU_PKG_NAME }}.zip
+          mv ${{ env.NCNN_GPU_PKG_NAME }} OcrLibrary/src/main/ncnn-vulkan
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn-vulkan/arm64-v8a/lib/cmake/ncnn/ncnn.cmake
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn-vulkan/armeabi-v7a/lib/cmake/ncnn/ncnn.cmake
           sed -i -e 's/  INTERFACE_COMPILE_OPTIONS "-fno-rtti;-fno-exceptions"/#&/' OcrLibrary/src/main/ncnn-vulkan/x86/lib/cmake/ncnn/ncnn.cmake
