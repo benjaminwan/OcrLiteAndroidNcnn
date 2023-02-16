@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # 检出代码
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Unshallow
         run: git fetch --prune --unshallow
 
       # 设置JDK版本
       - name: set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
@@ -26,7 +26,7 @@ jobs:
       # 缓存依赖项
       # https://docs.github.com/cn/actions/guides/building-and-testing-java-with-gradle#caching-dependencies
       - name: Cache Gradle packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -77,7 +77,7 @@ jobs:
       # 上传apk 到action(需要定制)
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload APK/AAR
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: outputs
           path: |
@@ -185,7 +185,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body_path: Release.txt
-          draft: true
+          draft: false
           files: |
             ${{ steps.apk-path.outputs.path1 }}
             ${{ steps.apk-path.outputs.path2 }}
